@@ -155,39 +155,28 @@ namespace Bridge.App.Serializations.Manager
             /// <param name="callback"></param>
             public static void Save<T>(StorageData.Info storageDataInfo, T serializationData, Action<StorageData.CallBackResults> callback = null)
             {
-                var results = new StorageData.CallBackResults();
+                var callBackResults = new StorageData.CallBackResults();
+
 
                 if (string.IsNullOrEmpty(storageDataInfo.fileName) || string.IsNullOrEmpty(storageDataInfo.folderName))
                 {
-                    results.success = false;
-                    results.error = true;
-                    results.errorValue = "-->> Null Exception : Storage data info <color=cyan>[File Name / Folder Name]</color> can't be null.";
+                    callBackResults.success = false;
+                    callBackResults.error = true;
+                    callBackResults.errorValue = "-->> Null Exception : Storage data info <color=cyan>[File Name / Folder Name]</color> can't be null.";
                 }
 
                 storageDataInfo.fileName = storageDataInfo.fileName.Contains(".json") ? storageDataInfo.fileName : storageDataInfo.fileName + ".json";
-                storageDataInfo.fileName = storageDataInfo.fileName.ToLowerInvariant();
+                storageDataInfo.requestType = StorageData.StorageRequestType.SaveData;
 
-                Debug.Log($"-->> File Name : {storageDataInfo.fileName}, Directory : {storageDataInfo.folderName}");
-
-                GetDirectory(StorageData.StorageRequestType.SaveData, storageDataInfo.folderName, (results) =>
+                GetPath(storageDataInfo, serializationData, results => 
                 {
                     if (results.error == true)
                     {
                         Debug.LogWarning(results.errorValue);
                     }
 
-                    if(results.success)
+                    if (results.success)
                     {
-                        //string serializedData = JsonUtility.ToJson(serializationData);
-                        //storageDataInfo.path = Path.Combine(storageDataInfo.directory, dataInfo.fileName);
-
-                        //if (File.Exists(storageDataInfo.path) == true)
-                        //{
-                        //    File.Delete(storageDataInfo.path);
-                        //}
-
-                        //File.WriteAllText(storageDataInfo.path, serializedData);
-
                         Debug.Log(results.successValue);
                     }
 
@@ -213,6 +202,127 @@ namespace Bridge.App.Serializations.Manager
 
                 //    callback.Invoke(data, string.IsNullOrEmpty(serializedDataFile));
                 //});
+            }
+
+            private static void GetPath<T>(StorageData.Info storageDataInfo, T serializableData,  Action<StorageData.CallBackResults> callback)
+            {
+                storageDataInfo.fileName = storageDataInfo.fileName.Contains(".json")? storageDataInfo.fileName : storageDataInfo.fileName + ".json";
+
+                GetDirectory(storageDataInfo.requestType, storageDataInfo.folderName, (results) =>
+                {
+                    if (results.error == true)
+                    {
+                        Debug.LogWarning(results.errorValue);
+                    }
+
+                    if (results.success)
+                    {
+                        storageDataInfo.serializedData = JsonUtility.ToJson(serializableData);
+                        storageDataInfo.filePath = Path.Combine(results.fileDirectory, storageDataInfo.fileName);
+
+                        switch(storageDataInfo.requestType)
+                        {
+                            case StorageData.StorageRequestType.SaveData:
+
+                                if (File.Exists(storageDataInfo.filePath) == true)
+                                {
+                                    File.Delete(storageDataInfo.filePath);
+                                }
+
+                                File.WriteAllText(storageDataInfo.filePath, storageDataInfo.serializedData);
+
+                                if (File.Exists(storageDataInfo.filePath) == false)
+                                {
+                                    results.error = true;
+                                    Debug.LogWarning($"-->> File write failed - Couldn't write file : {storageDataInfo.fileName} to disk with error : {results.errorValue}");
+
+                                    results.success = false;
+                                    results.successValue = "Null";
+                                }
+
+                                if (File.Exists(storageDataInfo.filePath) == true)
+                                {
+                                    results.success = true;
+                                    results.successValue = $"-->> <color=green>Success</color> <color=white>- Data file :</color> <color=cyan>{storageDataInfo.fileName}</color> <color=white>Replaced Successfully at path :</color> <color=cyan>{storageDataInfo.folderName}</color>";
+
+                                    results.error = false;
+                                    results.errorValue = "Null";
+                                }
+
+                                break;
+
+                            case StorageData.StorageRequestType.LoadData:
+
+                                Debug.Log("-->> Attempting to load data from disk.");
+
+                                break;
+                        }
+
+                        callback.Invoke(results);
+                    }
+                });
+            }
+
+            private static void GetDirectory(StorageData.StorageRequestType requestType, string folderName, Action<StorageData.CallBackResults> callback)
+            {
+                var results = new StorageData.CallBackResults();
+                results.fileDirectory = Path.Combine(Application.persistentDataPath, folderName);
+
+                switch (requestType)
+                {
+                    case StorageData.StorageRequestType.SaveData:
+
+                        if (Directory.Exists(results.fileDirectory) == false)
+                        {
+                            Directory.CreateDirectory(results.fileDirectory);
+
+                            results.error = Directory.Exists(results.fileDirectory) == false;
+                            results.success = Directory.Exists(results.fileDirectory) == true;
+
+                            if (results.error)
+                            {
+                                results.errorValue = $"-->> <color=red>Directory Creation Failed</color> - <color=white>Storage Directory could not be created at :</color>  <color=cyan>{results.fileDirectory}</color>";
+                            }
+
+                            if (results.success)
+                            {
+                                results.successValue = $"-->> <color=green>Success</color> - [Storage] Directory created successfully at : <color=cyan>{results.fileDirectory}</color>";
+                            }
+                        }
+
+                        if (Directory.Exists(results.fileDirectory) == true)
+                        {
+                            results.success = true;
+                            results.successValue = $"-->> <color=green>Success</color> - [Storage] Directory created successfully at : <color=cyan>{results.fileDirectory}</color>";
+
+                            results.error = false;
+                            results.errorValue = "Null";
+                        }
+
+                        break;
+
+                    case StorageData.StorageRequestType.LoadData:
+
+                        if (Directory.Exists(results.fileDirectory) == false)
+                        {
+                            results.error = true;
+                            results.errorValue = $"-->> <color=red>Directory Load Failed</color> - <color=white>[Storage] Directory could not be found at :</color>  <color=cyan>{results.fileDirectory}</color>";
+                        }
+
+                        if (Directory.Exists(results.fileDirectory) == true)
+                        {
+                            results.success = true;
+                            results.successValue = $"-->> <color=green>Success</color> - Storage Directory found at : <color=cyan>{results.fileDirectory}</color>";
+                        }
+
+                        break;
+
+                    case StorageData.StorageRequestType.DeleteDataDirectory:
+
+                        break;
+                }
+
+                callback.Invoke(results);
             }
 
             public static void DeleteFile(StorageData storageDataInfo, Action<string, bool> callback)
@@ -250,89 +360,6 @@ namespace Bridge.App.Serializations.Manager
                 //    Directory.Delete(serializationDataInfo.directory);
                 //    callback.Invoke(serializationDataInfo.directory, Directory.Exists(serializationDataInfo.directory));
                 //});
-            }
-
-            private static void GetDirectory(StorageData.StorageRequestType requestType, string folderName, Action<StorageData.CallBackResults> callback)
-            {
-                var results = new StorageData.CallBackResults();
-                results.fileDirectory = Path.Combine(Application.persistentDataPath, folderName);
-
-                switch(requestType)
-                {
-                    case StorageData.StorageRequestType.SaveData:
-
-                        if (Directory.Exists(results.fileDirectory) == false)
-                        {
-                            Directory.CreateDirectory(results.fileDirectory);
-
-                            results.error = Directory.Exists(results.fileDirectory) == false;
-                            results.success = Directory.Exists(results.fileDirectory) == true;
-
-                            if (results.error)
-                            {
-                                results.errorValue = $"-->> <color=red>Directory Creation Failed</color> - <color=white>Storage Directory could not be created at :</color>  <color=cyan>{results.fileDirectory}</color>";
-                            }
-
-                            if(results.success)
-                            {
-                                results.successValue = $"-->> <color=green>Success</color> - [Storage] Directory created successfully at : <color=cyan>{results.fileDirectory}</color>";
-                            }
-                        }
-
-                        if(Directory.Exists(results.fileDirectory) == true)
-                        {
-                            results.success = true;
-                            results.successValue = $"-->> <color=green>Success</color> - [Storage] Directory created successfully at : <color=cyan>{results.fileDirectory}</color>";
-
-                            results.error = false;
-                            results.errorValue = "Null";
-                        }
-
-                        break;
-
-                    case StorageData.StorageRequestType.LoadData:
-
-                        if (Directory.Exists(results.fileDirectory) == false)
-                        {
-                            results.error = true;
-                            results.errorValue = $"-->> <color=red>Directory Load Failed</color> - <color=white>[Storage] Directory could not be found at :</color>  <color=cyan>{results.fileDirectory}</color>";
-                        }
-
-                        if (Directory.Exists(results.fileDirectory) == true)
-                        {
-                            results.success = true;
-                            results.successValue = $"-->> <color=green>Success</color> - Storage Directory found at : <color=cyan>{results.fileDirectory}</color>";
-                        }
-
-                        break;
-
-                    case StorageData.StorageRequestType.DeleteDataDirectory:
-
-                        break;
-                }
-
-                callback.Invoke(results);
-            }
-
-            private static void GetPath(StorageData storageDataInfo, Action<StorageData, bool> callback)
-            {
-                //StorageData dataFileInfo = new StorageData();
-                //dataFileInfo.fileName = storageDataInfo.fileName.Contains(".json") ? storageDataInfo.fileName : storageDataInfo.fileName + ".json";
-
-                //GetDirectory(storageDataInfo.folderName, (dataInfo, exists) =>
-                //{
-                //    if (exists == false)
-                //    {
-                //        Debug.LogWarning($"-->> <color=orange></color> <color=white>Serialization data directory :</color> <color=cyan>{dataInfo.directory}</color> <color=white>doesn't exist.</color>");
-                //        return;
-                //    }
-
-                //    dataFileInfo.folderName = storageDataInfo.folderName;
-                //    dataFileInfo.path = Path.Combine(dataInfo.directory, dataFileInfo.fileName); ;
-                //});
-
-
-                //callback.Invoke(dataFileInfo, File.Exists(dataFileInfo.path));
             }
 
             #endregion

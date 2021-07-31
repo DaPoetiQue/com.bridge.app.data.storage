@@ -9,13 +9,14 @@ namespace Bridge.App.Serializations.Manager
 
         public class Info
         {
-            // Files.
             public string fileName;
             public string folderName;
 
-            // Directory.
-            public string directory;
-            public string path;
+            public string filePath;
+            public string fileDirectory;
+
+            public StorageRequestType requestType;
+            public string serializedData;
         }
 
         public class CallBackResults
