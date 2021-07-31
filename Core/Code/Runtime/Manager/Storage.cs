@@ -5,17 +5,17 @@ using UnityEngine;
 
 namespace Bridge.App.Serializations.Manager
 {
-    public class SerializationDataPersistentStorage
+    public class Storage
     {
-        public static class BinaryFormatterDataStorage
+        public static class BinaryFiles
         {
             #region Binary Formatter Data
 
-            public static void SaveData<T>(StorageDataInfo storageDataInfo, T storedData, Action<string, bool> saveCallBack = null) where T : UnityEngine.Object
+            public static void Save<T>(StorageDataInfo storageDataInfo, T storedData, Action<string, bool> saveCallBack = null) where T : UnityEngine.Object
             {
                 storageDataInfo.fileName = storageDataInfo.fileName.Contains(".json") ? storageDataInfo.fileName : storageDataInfo.fileName + ".json";
 
-                GetDataDirectory(storageDataInfo.folderName, (dataInfo, exists) =>
+                GetDirectory(storageDataInfo.folderName, (dataInfo, exists) =>
                 {
                     if (exists == false)
                     {
@@ -36,12 +36,12 @@ namespace Bridge.App.Serializations.Manager
                 });
             }
 
-            public static void LoadData<T>(StorageDataInfo storageDataInfo, Action<T, bool> callback = null) where T : UnityEngine.Object
+            public static void Load<T>(StorageDataInfo storageDataInfo, Action<T, bool> callback = null) where T : UnityEngine.Object
             {
                 storageDataInfo.fileName = storageDataInfo.fileName.Contains(".json") ? storageDataInfo.fileName : storageDataInfo.fileName + ".json";
                 storageDataInfo.path = Path.Combine(storageDataInfo.directory, storageDataInfo.fileName);
 
-                GetDataPath(storageDataInfo, (dataInfo, exists) =>
+                GetPath(storageDataInfo, (dataInfo, exists) =>
                 {
                     if (exists == false)
                     {
@@ -56,9 +56,9 @@ namespace Bridge.App.Serializations.Manager
                 });
             }
 
-            public static void DeleteData(StorageDataInfo storageDataInfo, Action<string, bool> callback)
+            public static void DeleteFile(StorageDataInfo storageDataInfo, Action<string, bool> callback)
             {
-                GetDataPath(storageDataInfo, (serializationDataInfo, exists) =>
+                GetPath(storageDataInfo, (serializationDataInfo, exists) =>
                 {
                     if (exists == false)
                     {
@@ -78,9 +78,9 @@ namespace Bridge.App.Serializations.Manager
                 });
             }
 
-            public static void DeleteDataDirectory(string folderName, Action<string, bool> callback)
+            public static void DeleteDirectory(string folderName, Action<string, bool> callback)
             {
-                GetDataDirectory(folderName, (serializationDataInfo, exists) =>
+                GetDirectory(folderName, (serializationDataInfo, exists) =>
                 {
                     if (exists == false)
                     {
@@ -93,7 +93,7 @@ namespace Bridge.App.Serializations.Manager
                 });
             }
 
-            private static void GetDataDirectory(string folderName, Action<StorageDataInfo, bool> callback)
+            private static void GetDirectory(string folderName, Action<StorageDataInfo, bool> callback)
             {
                 StorageDataInfo directoryDataInfo = new StorageDataInfo();
                 directoryDataInfo.directory = Path.Combine(Application.persistentDataPath, folderName);
@@ -106,12 +106,12 @@ namespace Bridge.App.Serializations.Manager
                 callback.Invoke(directoryDataInfo, Directory.Exists(directoryDataInfo.directory));
             }
 
-            private static void GetDataPath(StorageDataInfo storageDataInfo, Action<StorageDataInfo, bool> callback)
+            private static void GetPath(StorageDataInfo storageDataInfo, Action<StorageDataInfo, bool> callback)
             {
                 StorageDataInfo dataFileInfo = new StorageDataInfo();
                 dataFileInfo.fileName = storageDataInfo.fileName.Contains(".json") ? storageDataInfo.fileName : storageDataInfo.fileName + ".json";
 
-                GetDataDirectory(storageDataInfo.folderName, (dataInfo, exists) =>
+                GetDirectory(storageDataInfo.folderName, (dataInfo, exists) =>
                 {
                     if (exists == false)
                     {
@@ -130,15 +130,15 @@ namespace Bridge.App.Serializations.Manager
             #endregion
         }
 
-        public static class JsonDataStorage
+        public static class JsonFiles
         {
             #region Json Utility Data
 
-            public static void SaveData<T>(StorageDataInfo storageDataInfo, T serializationData, Action<string, bool> saveCallBack = null) where T : UnityEngine.Object
+            public static void Save<T>(StorageDataInfo storageDataInfo, T serializationData, Action<string, bool> saveCallBack = null) where T : UnityEngine.Object
             {
                 storageDataInfo.fileName = storageDataInfo.fileName.Contains(".json") ? storageDataInfo.fileName : storageDataInfo.fileName + ".json";
 
-                GetDataDirectory(storageDataInfo.folderName, (dataInfo, exists) =>
+                GetDirectory(storageDataInfo.folderName, (dataInfo, exists) =>
                 {
                     if (exists == false)
                     {
@@ -159,12 +159,12 @@ namespace Bridge.App.Serializations.Manager
                 });
             }
 
-            public static void LoadData<T>(StorageDataInfo storageDataInfo, Action<T, bool> callback = null) where T : UnityEngine.Object
+            public static void Load<T>(StorageDataInfo storageDataInfo, Action<T, bool> callback = null) where T : UnityEngine.Object
             {
                 storageDataInfo.fileName = storageDataInfo.fileName.Contains(".json") ? storageDataInfo.fileName : storageDataInfo.fileName + ".json";
                 storageDataInfo.path = Path.Combine(storageDataInfo.directory, storageDataInfo.fileName);
 
-                GetDataPath(storageDataInfo, (dataInfo, exists) =>
+                GetPath(storageDataInfo, (dataInfo, exists) =>
                 {
                     if (exists == false)
                     {
@@ -179,9 +179,9 @@ namespace Bridge.App.Serializations.Manager
                 });
             }
 
-            public static void DeleteData(StorageDataInfo storageDataInfo, Action<string, bool> callback)
+            public static void DeleteFile(StorageDataInfo storageDataInfo, Action<string, bool> callback)
             {
-                GetDataPath(storageDataInfo, (serializationDataInfo, exists) =>
+                GetPath(storageDataInfo, (serializationDataInfo, exists) =>
                 {
                     if (exists == false)
                     {
@@ -201,9 +201,9 @@ namespace Bridge.App.Serializations.Manager
                 });
             }
 
-            public static void DeleteDataDirectory(string folderName, Action<string, bool> callback)
+            public static void DeleteDirectory(string folderName, Action<string, bool> callback)
             {
-                GetDataDirectory(folderName, (serializationDataInfo, exists) =>
+                GetDirectory(folderName, (serializationDataInfo, exists) =>
                 {
                     if (exists == false)
                     {
@@ -216,7 +216,7 @@ namespace Bridge.App.Serializations.Manager
                 });
             }
 
-            private static void GetDataDirectory(string folderName, Action<StorageDataInfo, bool> callback)
+            private static void GetDirectory(string folderName, Action<StorageDataInfo, bool> callback)
             {
                 StorageDataInfo directoryDataInfo = new StorageDataInfo();
                 directoryDataInfo.directory = Path.Combine(Application.persistentDataPath, folderName);
@@ -229,12 +229,12 @@ namespace Bridge.App.Serializations.Manager
                 callback.Invoke(directoryDataInfo, Directory.Exists(directoryDataInfo.directory));
             }
 
-            private static void GetDataPath(StorageDataInfo storageDataInfo, Action<StorageDataInfo, bool> callback)
+            private static void GetPath(StorageDataInfo storageDataInfo, Action<StorageDataInfo, bool> callback)
             {
                 StorageDataInfo dataFileInfo = new StorageDataInfo();
                 dataFileInfo.fileName = storageDataInfo.fileName.Contains(".json") ? storageDataInfo.fileName : storageDataInfo.fileName + ".json";
 
-                GetDataDirectory(storageDataInfo.folderName, (dataInfo, exists) =>
+                GetDirectory(storageDataInfo.folderName, (dataInfo, exists) =>
                 {
                     if (exists == false)
                     {
