@@ -21,9 +21,6 @@ namespace Bridge.App.Serializations.Manager
 
         public class CallBackResults
         {
-            public string filePath;
-            public string fileDirectory;
-
             public bool success;
             public string successValue;
 
