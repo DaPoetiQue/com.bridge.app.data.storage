@@ -1,6 +1,6 @@
-namespace com.bridge.app.serializations.manager
+namespace Bridge.App.Serializations.Manager
 {
-    public class SerializationData
+    public class StorageDataInfo
     {
         // Files.
         public string fileName;

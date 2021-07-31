@@ -1,6 +1,6 @@
 {
-    "name": "com.bridge.app.serializations.manager",
-    "rootNamespace": "com.bridge.app.serializations.manager",
+    "name": "Bridge.App.Serializations.Manager",
+    "rootNamespace": "Bridge.App.Serializations.Manager",
     "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
