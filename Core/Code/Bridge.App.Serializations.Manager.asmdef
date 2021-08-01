@@ -2,7 +2,12 @@
     "name": "Bridge.App.Serializations.Manager",
     "rootNamespace": "Bridge.App.Serializations.Manager",
     "references": [],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Android",
+        "Editor",
+        "iOS",
+        "WindowsStandalone64"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

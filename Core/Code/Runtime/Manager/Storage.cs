@@ -11,7 +11,7 @@ namespace Bridge.App.Serializations.Manager
         {
             #region Binary Formatter Data
 
-            public static void Save<T>(StorageData.Info storageDataInfo, T serializationData, Action<StorageData.CallBackResults> callback = null)
+            public static void Save<T>(StorageData.DirectoryInfoData storageDataInfo, T serializationData, Action<StorageData.CallBackResults> callback = null)
             {
                 if (string.IsNullOrEmpty(storageDataInfo.fileName) || string.IsNullOrEmpty(storageDataInfo.folderName))
                 {
@@ -146,7 +146,7 @@ namespace Bridge.App.Serializations.Manager
         {
             #region Json Utility Data
 
-            #region Data Serializations
+            #region Serializations
 
             /// <summary>
             /// Saves app data to a file system using a json file.
@@ -155,7 +155,7 @@ namespace Bridge.App.Serializations.Manager
             /// <param name="storageDataInfo"></param>
             /// <param name="data"></param>
             /// <param name="callback"></param>
-            public static void Save<T>(StorageData.Info storageDataInfo, T data, Action<StorageData.CallBackResults> callback = null)
+            public static void Save<T>(StorageData.DirectoryInfoData storageDataInfo, T data, Action<StorageData.CallBackResults> callback = null)
             {
                 try
                 {
@@ -163,25 +163,23 @@ namespace Bridge.App.Serializations.Manager
                     {
                         StorageData.CallBackResults callBackResults = new StorageData.CallBackResults();
 
-                        if (Directory.Exists(storageDataResults.fileDirectory) == false) Directory.CreateDirectory(storageDataResults.fileDirectory);
+                        if (Directory.Exists(storageDataResults.fileDirectory) == false)
+                        {
+                            Directory.CreateDirectory(storageDataResults.fileDirectory);
+                        }
 
                         if (Directory.Exists(storageDataResults.fileDirectory) == true)
                         {
                             string jsonStringData = JsonUtility.ToJson(data);
                             File.WriteAllText(storageDataResults.filePath, jsonStringData);
 
-                            if (File.Exists(storageDataResults.filePath) == false)
+                            if (File.Exists(storageDataResults.filePath) == true)
                             {
-                                if (storageDataInfo.encryptData)
-                                {
-                                    File.Encrypt(storageDataResults.filePath);
-                                }
-
                                 callBackResults.success = true;
                                 callBackResults.successValue = $"-->> <color=white>[Storage]</color><color=green>Success</color> <color=white>- Data file :</color> <color=cyan>{storageDataResults.fileName}</color> <color=white>Replaced Successfully at path :</color> <color=cyan>{storageDataResults.folderName}</color>";
                             }
 
-                            if(File.Exists(storageDataResults.filePath) == true)
+                            if(File.Exists(storageDataResults.filePath) == false)
                             {
                                 callBackResults.error = true;
                                 callBackResults.errorValue = $"-->> <color=white>[Storage]</color><color=red>File write failed</color> <color=white>-Couldn't write file :</color> <color=cyan>{storageDataResults.fileName}</color> <color=white>, to path :</color> <color=orange>{storageDataResults.filePath}</color>";
@@ -190,7 +188,7 @@ namespace Bridge.App.Serializations.Manager
                         else
                         {
                             callBackResults.error = true;
-                            callBackResults.errorValue = $"-->> <color=white>[Storage]</color><color=red>File write failed</color> <color=white>-Couldn't write file :</color> <color=cyan>{storageDataResults.fileName}</color> <color=white>, to path :</color> <color=orange>{storageDataResults.filePath}</color>";
+                            callBackResults.errorValue = $"-->> <color=white>[Storage]</color><color=red>File write failed</color> <color=white>-Couldn't write file :</color> <color=cyan>{storageDataResults.fileName}</color> <color=white>, to path :</color> <color=orange>{storageDataResults.filePath}</color>, <color=white>File storage directory not found.</color>";
                         }
 
                         callback.Invoke(callBackResults);
@@ -198,7 +196,7 @@ namespace Bridge.App.Serializations.Manager
                 }
                 catch(Exception exception)
                 {
-                    Debug.LogError($"-->> <color=white>[Storage]</color><color=red>Save Failed</color>- <color=white>Storage file save failed with exception message : </color> <color=cyan>{exception.Message}</color>");
+                    Debug.LogError($"-->> <color=white>[Storage]</color><color=red>Save Failed Exception</color>- <color=white>Storage file save failed with exception message : </color> <color=cyan>{exception.Message}</color>");
                 }
             }
 
@@ -209,7 +207,7 @@ namespace Bridge.App.Serializations.Manager
             /// <param name="storageDataInfo"></param>
             /// <param name="serializationData"></param>
             /// <param name="callback"></param>
-            public static void Load<T>(StorageData.Info storageDataInfo, Action<T, StorageData.CallBackResults> callback = null)
+            public static void Load<T>(StorageData.DirectoryInfoData storageDataInfo, Action<T, StorageData.CallBackResults> callback = null)
             {
                 try
                 {
@@ -219,11 +217,6 @@ namespace Bridge.App.Serializations.Manager
 
                         if (File.Exists(storageDataResults.filePath) == true)
                         {
-                            if (storageDataInfo.encryptData)
-                            {
-                                File.Decrypt(storageDataResults.filePath);
-                            }
-
                             callBackResults.success = true;
                             callBackResults.successValue = $"-->> <color=white>[Storage]</color><color=green>Load Data Success</color> <color=white>- Stoarge data file :</color> <color=cyan>{storageDataInfo.fileName}</color> <color=white>has been loaded Successfully form path :</color> <color=cyan>{storageDataInfo.filePath}</color>";
                         }
@@ -250,14 +243,48 @@ namespace Bridge.App.Serializations.Manager
 
             #endregion
 
-            #region Disposals
+            #region Disposables
+
+            /// <summary>
+            /// Checks if a file exists in a given directory.
+            /// </summary>
+            /// <param name="storageDataInfo"></param>
+            /// <param name="callback"></param>
+            public static void StorageDataFileExist(StorageData.DirectoryInfoData storageDataInfo, Action<StorageData.DirectoryInfoData, StorageData.CallBackResults> callback = null)
+            {
+                try
+                {
+                    GetDataFilePath(storageDataInfo, (storageDataResults) =>
+                    {
+                        StorageData.CallBackResults callBackResults = new StorageData.CallBackResults();
+
+                        if (File.Exists(storageDataResults.filePath) == true)
+                        {
+                            callBackResults.success = true;
+                            callBackResults.successValue = $"-->> <color=white>[Storage]</color><color=green>Success</color> <color=white>- File :</color> <color=cyan>{storageDataInfo.fileName}</color> <color=white>exists at path :</color> <color=cyan>{storageDataInfo.filePath}</color>";
+                        }
+
+                        if(File.Exists(storageDataResults.filePath) == false)
+                        {
+                            callBackResults.error = true;
+                            callBackResults.errorValue = $"-->> <color=white>[Storage]</color><color=red>Get File Failed</color> <color=white>-There is no file to get at path :</color> <color=cyan>{storageDataInfo.filePath}</color>";
+                        }
+
+                        callback.Invoke(storageDataResults, callBackResults);
+                    });
+                }
+                catch (Exception exception)
+                {
+                    Debug.LogError($"-->> <color=white>[Storage]</color><color=red>Get File Failed</color>- <color=white>Failed to access file :</color> <color=cyan>{storageDataInfo.fileName}</color> <color=white>with exception message : </color> <color=cyan>{exception.Message}</color>");
+                }
+            }
 
             /// <summary>
             /// Removes a file from a specified directory.
             /// </summary>
             /// <param name="storageDataInfo"></param>
             /// <param name="callback"></param>
-            public static void DeleteFile(StorageData.Info storageDataInfo, Action<StorageData.CallBackResults> callback = null)
+            public static void DeleteFile(StorageData.DirectoryInfoData storageDataInfo, Action<StorageData.CallBackResults> callback = null)
             {
                 try
                 {
@@ -295,7 +322,7 @@ namespace Bridge.App.Serializations.Manager
             /// </summary>
             /// <param name="storageDataInfo"></param>
             /// <param name="callback"></param>
-            public static void DeleteDirectory(StorageData.Info storageDataInfo, Action<StorageData.CallBackResults> callback = null)
+            public static void DeleteDirectory(StorageData.DirectoryInfoData storageDataInfo, Action<StorageData.CallBackResults> callback = null)
             {
                 try
                 {
@@ -337,7 +364,7 @@ namespace Bridge.App.Serializations.Manager
             /// </summary>
             /// <param name="storageDataInfo"></param>
             /// <param name="callback"></param>
-            private static void GetDataFilePath(StorageData.Info storageDataInfo, Action<StorageData.Info> callback = null)
+            private static void GetDataFilePath(StorageData.DirectoryInfoData storageDataInfo, Action<StorageData.DirectoryInfoData> callback = null)
             {
                 try
                 {
