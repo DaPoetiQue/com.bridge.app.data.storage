@@ -16,7 +16,7 @@ namespace Bridge.App.Serializations.Manager
             public string fileDirectory;
 
             public StorageRequestType requestType;
-            public string serializedData;
+            public string jsonStringFileData;
         }
 
         public class CallBackResults
