@@ -7,7 +7,7 @@ namespace Bridge.App.Serializations.Manager
 {
     public class Storage
     {
-        public static class BinaryFiles
+        public static class BinaryFormatJasonData
         {
             #region Binary Formatter Data
 
@@ -142,7 +142,7 @@ namespace Bridge.App.Serializations.Manager
             #endregion
         }
 
-        public static class JsonFiles
+        public static class JsonData
         {
             #region Json Utility Data
 
@@ -172,20 +172,25 @@ namespace Bridge.App.Serializations.Manager
 
                             if (File.Exists(storageDataResults.filePath) == false)
                             {
+                                if (storageDataInfo.encryptData)
+                                {
+                                    File.Encrypt(storageDataResults.filePath);
+                                }
+
                                 callBackResults.success = true;
-                                callBackResults.successValue = $"-->> <color=green>Success</color> <color=white>- Data file :</color> <color=cyan>{storageDataResults.fileName}</color> <color=white>Replaced Successfully at path :</color> <color=cyan>{storageDataResults.folderName}</color>";
+                                callBackResults.successValue = $"-->> <color=white>[Storage]</color><color=green>Success</color> <color=white>- Data file :</color> <color=cyan>{storageDataResults.fileName}</color> <color=white>Replaced Successfully at path :</color> <color=cyan>{storageDataResults.folderName}</color>";
                             }
 
                             if(File.Exists(storageDataResults.filePath) == true)
                             {
                                 callBackResults.error = true;
-                                callBackResults.errorValue = $"-->> <color=red>File write failed</color> <color=white>-Couldn't write file :</color> <color=cyan>{storageDataResults.fileName}</color> <color=white>, to path :</color> <color=orange>{storageDataResults.filePath}</color>";
+                                callBackResults.errorValue = $"-->> <color=white>[Storage]</color><color=red>File write failed</color> <color=white>-Couldn't write file :</color> <color=cyan>{storageDataResults.fileName}</color> <color=white>, to path :</color> <color=orange>{storageDataResults.filePath}</color>";
                             }
                         }
                         else
                         {
                             callBackResults.error = true;
-                            callBackResults.errorValue = $"-->> <color=red>File write failed</color> <color=white>-Couldn't write file :</color> <color=cyan>{storageDataResults.fileName}</color> <color=white>, to path :</color> <color=orange>{storageDataResults.filePath}</color>";
+                            callBackResults.errorValue = $"-->> <color=white>[Storage]</color><color=red>File write failed</color> <color=white>-Couldn't write file :</color> <color=cyan>{storageDataResults.fileName}</color> <color=white>, to path :</color> <color=orange>{storageDataResults.filePath}</color>";
                         }
 
                         callback.Invoke(callBackResults);
@@ -193,7 +198,7 @@ namespace Bridge.App.Serializations.Manager
                 }
                 catch(Exception exception)
                 {
-                    Debug.LogError($"-->> <color=red>Save Failed</color>- <color=white>Storage file save failed with exception message : </color> <color=cyan>{exception.Message}</color>");
+                    Debug.LogError($"-->> <color=white>[Storage]</color><color=red>Save Failed</color>- <color=white>Storage file save failed with exception message : </color> <color=cyan>{exception.Message}</color>");
                 }
             }
 
@@ -214,13 +219,18 @@ namespace Bridge.App.Serializations.Manager
 
                         if (File.Exists(storageDataResults.filePath) == true)
                         {
+                            if (storageDataInfo.encryptData)
+                            {
+                                File.Decrypt(storageDataResults.filePath);
+                            }
+
                             callBackResults.success = true;
-                            callBackResults.successValue = $"-->> [Storage]<color=green>Load Data Success</color> <color=white>- Stoarge data file :</color> <color=cyan>{storageDataInfo.fileName}</color> <color=white>has been loaded Successfully form path :</color> <color=cyan>{storageDataInfo.filePath}</color>";
+                            callBackResults.successValue = $"-->> <color=white>[Storage]</color><color=green>Load Data Success</color> <color=white>- Stoarge data file :</color> <color=cyan>{storageDataInfo.fileName}</color> <color=white>has been loaded Successfully form path :</color> <color=cyan>{storageDataInfo.filePath}</color>";
                         }
                         else
                         {
                             callBackResults.error = true;
-                            callBackResults.errorValue = $"-->> [Storage]<color=red>File Load Failed</color> <color=white>-The system couldn't find a file to read at path :</color> <color=cyan>{storageDataInfo.filePath}</color>";
+                            callBackResults.errorValue = $"-->> <color=white>[Storage]</color><color=red>File Load Failed</color> <color=white>-The system couldn't find a file to read at path :</color> <color=cyan>{storageDataInfo.filePath}</color>";
                         }
 
                         if (callBackResults.success == true)
@@ -234,7 +244,7 @@ namespace Bridge.App.Serializations.Manager
                 }
                 catch (Exception exception)
                 {
-                    Debug.LogError($"-->> [Storage]<color=red>Load Data Failed</color>- <color=white>File failed to load with exception message : </color> <color=cyan>{exception.Message}</color>");
+                    Debug.LogError($"-->> <color=white>[Storage]</color><color=red>Load Data Failed</color>- <color=white>File failed to load with exception message : </color> <color=cyan>{exception.Message}</color>");
                 }
             }
 
@@ -262,13 +272,13 @@ namespace Bridge.App.Serializations.Manager
                             if (File.Exists(storageDataResults.filePath) == false)
                             {
                                 callBackResults.success = true;
-                                callBackResults.successValue = $"-->> [Storage]<color=green>Load Data Success</color> <color=white>- Stoarge data file :</color> <color=cyan>{storageDataInfo.fileName}</color> <color=white>has been loaded Successfully form path :</color> <color=cyan>{storageDataInfo.filePath}</color>";
+                                callBackResults.successValue = $"-->> <color=white>[Storage]</color><color=green>Load Data Success</color> <color=white>- Stoarge data file :</color> <color=cyan>{storageDataInfo.fileName}</color> <color=white>has been loaded Successfully form path :</color> <color=cyan>{storageDataInfo.filePath}</color>";
                             }
                         }
                         else
                         {
                             callBackResults.error = true;
-                            callBackResults.errorValue = $"-->> [Storage]<color=red>File Load Failed</color> <color=white>-There is no file to read at path :</color> <color=cyan>{storageDataInfo.filePath}</color>";
+                            callBackResults.errorValue = $"-->> <color=white>[Storage]</color><color=red>File Load Failed</color> <color=white>-There is no file to read at path :</color> <color=cyan>{storageDataInfo.filePath}</color>";
                         }
 
                         callback.Invoke(callBackResults);
@@ -276,7 +286,7 @@ namespace Bridge.App.Serializations.Manager
                 }
                 catch (Exception exception)
                 {
-                    Debug.LogError($"-->> [Storage]<color=red>Delete File Failed</color>- <color=white>File failed to delete with exception message : </color> <color=cyan>{exception.Message}</color>");
+                    Debug.LogError($"-->> <color=white>[Storage]</color><color=red>Delete File Failed</color>- <color=white>File failed to delete with exception message : </color> <color=cyan>{exception.Message}</color>");
                 }
             }
 
@@ -300,13 +310,13 @@ namespace Bridge.App.Serializations.Manager
                             if (Directory.Exists(storageDataResults.fileDirectory) == false)
                             {
                                 callBackResults.success = true;
-                                callBackResults.successValue = $"-->> [Storage]<color=green>Delete Data Directory Success</color> <color=white>- Storage data director :</color> <color=cyan>{storageDataInfo.fileDirectory}</color> <color=white>has been deleted Successfully.</color>";
+                                callBackResults.successValue = $"-->> <color=white>[Storage]</color><color=green>Delete Data Directory Success</color> <color=white>- Storage data director :</color> <color=cyan>{storageDataInfo.fileDirectory}</color> <color=white>has been deleted Successfully.</color>";
                             }
                         }
                         else
                         {
                             callBackResults.error = true;
-                            callBackResults.errorValue = $"-->> [Storage]<color=red>Delete Data Directory Failed</color> <color=white>-There is no Director to remove at path :</color> <color=cyan>{storageDataInfo.fileDirectory}</color>";
+                            callBackResults.errorValue = $"-->> <color=white>[Storage]</color><color=red>Delete Data Directory Failed</color> <color=white>-There is no Director to remove at path :</color> <color=cyan>{storageDataInfo.fileDirectory}</color>";
                         }
 
                         callback.Invoke(callBackResults);
@@ -314,7 +324,7 @@ namespace Bridge.App.Serializations.Manager
                 }
                 catch (Exception exception)
                 {
-                    Debug.LogError($"-->> [Storage]<color=red>Delete Directory Failed</color>- <color=white>Directory failed to delete with exception message : </color> <color=cyan>{exception.Message}</color>");
+                    Debug.LogError($"-->> <color=white>[Storage]</color><color=red>Delete Directory Failed</color>- <color=white>Directory failed to delete with exception message : </color> <color=cyan>{exception.Message}</color>");
                 }
             }
 
@@ -333,7 +343,7 @@ namespace Bridge.App.Serializations.Manager
                 {
                     if (string.IsNullOrEmpty(storageDataInfo.fileName) || string.IsNullOrEmpty(storageDataInfo.folderName))
                     {
-                        throw new NullReferenceException("-->> <color=red>Null Exception</color> <color=white>: Storage data info</color> <color=cyan>[File Name / Folder Name]</color> <color=white>can't be null.</color>");
+                        throw new NullReferenceException("-->> <color=white>[Storage]</color><color=red>Null Exception</color> <color=white>: Storage data info</color> <color=cyan>[File Name / Folder Name]</color> <color=white>can't be null.</color>");
                     }
 
                     storageDataInfo.fileName = storageDataInfo.fileName.Contains(".json") ? storageDataInfo.fileName : storageDataInfo.fileName + ".json";
@@ -344,7 +354,7 @@ namespace Bridge.App.Serializations.Manager
                 }
                 catch(Exception exception)
                 {
-                    Debug.LogError($"-->> <color=red>Get Path Exception </color><color=white>- Failed to get storage data. Exception message :</color> <color=cyan>{exception.Message}</color>");
+                    Debug.LogError($"-->> <color=white>[Storage]</color><color=red>Get Path Exception </color><color=white>- Failed to get storage data. Exception message :</color> <color=cyan>{exception.Message}</color>");
                 }
             }
 

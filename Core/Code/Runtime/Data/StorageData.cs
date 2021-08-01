@@ -2,21 +2,14 @@ namespace Bridge.App.Serializations.Manager
 {
     public class StorageData
     {
-        public enum StorageRequestType
-        {
-            SaveData, LoadData, DeleteDataFile, DeleteDataDirectory
-        }
-
         public class Info
         {
             public string fileName;
             public string folderName;
-
             public string filePath;
             public string fileDirectory;
-
-            public StorageRequestType requestType;
             public string jsonStringFileData;
+            public bool encryptData;
         }
 
         public class CallBackResults
@@ -26,6 +19,8 @@ namespace Bridge.App.Serializations.Manager
 
             public bool error;
             public string errorValue;
+
+            public bool dataEncrypted;
         }
     }
 }
