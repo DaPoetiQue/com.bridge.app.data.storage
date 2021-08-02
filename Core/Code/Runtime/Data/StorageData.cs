@@ -2,7 +2,7 @@ using System;
 using UnityEditor;
 using UnityEngine;
 
-namespace Bridge.Core.App.Serializations.Manager
+namespace Bridge.Core.App.Data.Storage
 {
     public class StorageData
     {

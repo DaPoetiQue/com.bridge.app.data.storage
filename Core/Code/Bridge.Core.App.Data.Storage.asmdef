@@ -1,6 +1,6 @@
 {
-    "name": "Bridge.Core.App.Serializations.Manager",
-    "rootNamespace": "Bridge.Core.App.Serializations.Manager",
+    "name": "Bridge.Core.App.Data.Storage",
+    "rootNamespace": "Bridge.Core.App.Data.Storage",
     "references": [
         "GUID:e716835e950357547805ba81a6fab883"
     ],

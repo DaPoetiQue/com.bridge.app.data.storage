@@ -6,7 +6,7 @@ using UnityEditor;
 using System.Linq;
 using Bridge.Core.App.Events;
 
-namespace Bridge.Core.App.Serializations.Manager
+namespace Bridge.Core.App.Data.Storage
 {
     /// <summary>
     /// This is the main class responsible for saving and loading data and assets.
