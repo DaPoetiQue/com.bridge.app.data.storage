@@ -1,7 +1,9 @@
 {
-    "name": "Bridge.App.Serializations.Manager",
-    "rootNamespace": "Bridge.App.Serializations.Manager",
-    "references": [],
+    "name": "Bridge.Core.App.Serializations.Manager",
+    "rootNamespace": "Bridge.Core.App.Serializations.Manager",
+    "references": [
+        "GUID:e716835e950357547805ba81a6fab883"
+    ],
     "includePlatforms": [
         "Android",
         "Editor",

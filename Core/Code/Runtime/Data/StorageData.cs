@@ -2,7 +2,7 @@ using System;
 using UnityEditor;
 using UnityEngine;
 
-namespace Bridge.App.Serializations.Manager
+namespace Bridge.Core.App.Serializations.Manager
 {
     public class StorageData
     {
@@ -34,15 +34,6 @@ namespace Bridge.App.Serializations.Manager
             public GUID gameObjectAssetGUID;
 
             public extensionType extensionType;
-        }
-
-        public class CallBackResults
-        {
-            public bool success;
-            public string successValue;
-
-            public bool error;
-            public string errorValue;
         }
 
         #region Serializable Data

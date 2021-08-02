@@ -4,8 +4,9 @@ using System.IO;
 using UnityEngine;
 using UnityEditor;
 using System.Linq;
+using Bridge.Core.App.Events;
 
-namespace Bridge.App.Serializations.Manager
+namespace Bridge.Core.App.Serializations.Manager
 {
     /// <summary>
     /// This is the main class responsible for saving and loading data and assets.
@@ -26,13 +27,13 @@ namespace Bridge.App.Serializations.Manager
             /// <param name="storageDataInfo"></param>
             /// <param name="data"></param>
             /// <param name="callback"></param>
-            public static void Save<T>(StorageData.DirectoryInfoData storageDataInfo, T data, Action<StorageData.CallBackResults> callback = null)
+            public static void Save<T>(StorageData.DirectoryInfoData storageDataInfo, T data, Action<AppEventsData.CallBackResults> callback = null)
             {
                 try
                 {
                     Directory.GetDataPath(storageDataInfo, (storageDataResults) =>
                     {
-                        StorageData.CallBackResults callBackResults = new StorageData.CallBackResults();
+                        var callBackResults = new AppEventsData.CallBackResults();
 
                         if (System.IO.Directory.Exists(storageDataResults.fileDirectory) == false)
                         {
@@ -82,13 +83,13 @@ namespace Bridge.App.Serializations.Manager
             /// <param name="storageDataInfo"></param>
             /// <param name="serializationData"></param>
             /// <param name="callback"></param>
-            public static void Load<T>(StorageData.DirectoryInfoData storageDataInfo, Action<T, StorageData.CallBackResults> callback = null)
+            public static void Load<T>(StorageData.DirectoryInfoData storageDataInfo, Action<T, AppEventsData.CallBackResults> callback = null)
             {
                 try
                 {
                     Directory.GetDataPath(storageDataInfo, (storageDataResults) =>
                     {
-                        StorageData.CallBackResults callBackResults = new StorageData.CallBackResults();
+                        var callBackResults = new AppEventsData.CallBackResults();
 
                         if (File.Exists(storageDataResults.filePath) == true)
                         {
@@ -135,13 +136,13 @@ namespace Bridge.App.Serializations.Manager
             /// <param name="storageDataInfo"></param>
             /// <param name="data"></param>
             /// <param name="callback"></param>
-            public static void Save<T>(StorageData.DirectoryInfoData storageDataInfo, T data, Action<StorageData.CallBackResults> callback = null)
+            public static void Save<T>(StorageData.DirectoryInfoData storageDataInfo, T data, Action<AppEventsData.CallBackResults> callback = null)
             {
                 try
                 {
                     Directory.GetDataPath(storageDataInfo, (storageDataResults) =>
                     {
-                        StorageData.CallBackResults callBackResults = new StorageData.CallBackResults();
+                        var callBackResults = new AppEventsData.CallBackResults();
 
                         if (System.IO.Directory.Exists(storageDataResults.fileDirectory) == false)
                         {
@@ -188,13 +189,13 @@ namespace Bridge.App.Serializations.Manager
             /// <param name="storageDataInfo"></param>
             /// <param name="serializationData"></param>
             /// <param name="callback"></param>
-            public static void Load<T>(StorageData.DirectoryInfoData storageDataInfo, Action<T, StorageData.CallBackResults> callback = null)
+            public static void Load<T>(StorageData.DirectoryInfoData storageDataInfo, Action<T, AppEventsData.CallBackResults> callback = null)
             {
                 try
                 {
                     Directory.GetDataPath(storageDataInfo, (storageDataResults) =>
                     {
-                        StorageData.CallBackResults callBackResults = new StorageData.CallBackResults();
+                        var callBackResults = new AppEventsData.CallBackResults();
 
                         if (File.Exists(storageDataResults.filePath) == true)
                         {
@@ -231,7 +232,7 @@ namespace Bridge.App.Serializations.Manager
         /// </summary>
         public static class AssetData
         {
-            public static void CreateSceneAsset(UnityEngine.Object sceneObject, StorageData.DirectoryInfoData directoryInfo, Action<StorageData.CallBackResults> callBack = null)
+            public static void CreateSceneAsset(UnityEngine.Object sceneObject, StorageData.DirectoryInfoData directoryInfo, Action<AppEventsData.CallBackResults> callBack = null)
             {
                 try
                 {
@@ -249,12 +250,12 @@ namespace Bridge.App.Serializations.Manager
             /// </summary>
             /// <param name="sceneAssetObject"></param>
             /// <param name="callBack"></param>
-            public static void GetSceneAssetPath(UnityEngine.Object sceneAssetObject, Action<StorageData.DirectoryInfoData, StorageData.CallBackResults> callBack = null)
+            public static void GetSceneAssetPath(UnityEngine.Object sceneAssetObject, Action<StorageData.DirectoryInfoData, AppEventsData.CallBackResults> callBack = null)
             {
                 try
                 {
                     var storageData = new StorageData.DirectoryInfoData();
-                    var results = new StorageData.CallBackResults();
+                    var results = new AppEventsData.CallBackResults();
 
                     if (sceneAssetObject == null)
                     {
@@ -304,11 +305,11 @@ namespace Bridge.App.Serializations.Manager
             /// </summary>
             /// <param name="storageAssetPathInfo"></param>
             /// <param name="callBack"></param>
-            public static void LoadSceneAsset(StorageData.DirectoryInfoData storageAssetPathInfo, Action<UnityEngine.Object, StorageData.CallBackResults> callBack = null)
+            public static void LoadSceneAsset(StorageData.DirectoryInfoData storageAssetPathInfo, Action<UnityEngine.Object, AppEventsData.CallBackResults> callBack = null)
             {
                 try
                 {
-                    var results = new StorageData.CallBackResults();
+                    var results = new AppEventsData.CallBackResults();
 
                     Directory.AssetPathExists(storageAssetPathInfo, callBackResults => 
                     {
@@ -397,13 +398,13 @@ namespace Bridge.App.Serializations.Manager
             /// </summary>
             /// <param name="directoryInfo"></param>
             /// <param name="callback"></param>
-            public static void DataPathExists(StorageData.DirectoryInfoData directoryInfo, Action<StorageData.DirectoryInfoData, StorageData.CallBackResults> callback = null)
+            public static void DataPathExists(StorageData.DirectoryInfoData directoryInfo, Action<StorageData.DirectoryInfoData, AppEventsData.CallBackResults> callback = null)
             {
                 try
                 {
                     Directory.GetDataPath(directoryInfo, (storageDataResults) =>
                     {
-                        StorageData.CallBackResults callBackResults = new StorageData.CallBackResults();
+                        var callBackResults = new AppEventsData.CallBackResults();
 
                         if (File.Exists(storageDataResults.filePath) == true)
                         {
@@ -453,11 +454,11 @@ namespace Bridge.App.Serializations.Manager
             /// </summary>
             /// <param name="assetPath"></param>
             /// <param name="callBack"></param>
-            public static void AssetPathExists(string assetPath, Action<StorageData.CallBackResults> callBack = null)
+            public static void AssetPathExists(string assetPath, Action<AppEventsData.CallBackResults> callBack = null)
             {
                 try
                 {
-                    var callBackResults = new StorageData.CallBackResults();
+                    var callBackResults = new AppEventsData.CallBackResults();
 
                     string[] pathFilter = AssetDatabase.GetAllAssetPaths();
 
@@ -488,11 +489,11 @@ namespace Bridge.App.Serializations.Manager
             /// </summary>
             /// <param name="directoryInfo"></param>
             /// <param name="callBack"></param>
-            public static void AssetPathExists(StorageData.DirectoryInfoData directoryInfo, Action<StorageData.CallBackResults> callBack = null)
+            public static void AssetPathExists(StorageData.DirectoryInfoData directoryInfo, Action<AppEventsData.CallBackResults> callBack = null)
             {
                 try
                 {
-                    var callBackResults = new StorageData.CallBackResults();
+                    var callBackResults = new AppEventsData.CallBackResults();
 
                     string[] pathFilter = AssetDatabase.GetAllAssetPaths();
 
@@ -536,13 +537,13 @@ namespace Bridge.App.Serializations.Manager
             /// </summary>
             /// <param name="storageDataInfo"></param>
             /// <param name="callback"></param>
-            public static void DeleteFile(StorageData.DirectoryInfoData storageDataInfo, Action<StorageData.CallBackResults> callback = null)
+            public static void DeleteFile(StorageData.DirectoryInfoData storageDataInfo, Action<AppEventsData.CallBackResults> callback = null)
             {
                 try
                 {
                     Directory.GetDataPath(storageDataInfo, (storageDataResults) =>
                     {
-                        StorageData.CallBackResults callBackResults = new StorageData.CallBackResults();
+                        var callBackResults = new AppEventsData.CallBackResults();
 
                         if (File.Exists(storageDataResults.filePath) == true)
                         {
@@ -575,13 +576,13 @@ namespace Bridge.App.Serializations.Manager
             /// </summary>
             /// <param name="storageDataInfo"></param>
             /// <param name="callback"></param>
-            public static void DeleteDirectory(StorageData.DirectoryInfoData storageDataInfo, Action<StorageData.CallBackResults> callback = null)
+            public static void DeleteDirectory(StorageData.DirectoryInfoData storageDataInfo, Action<AppEventsData.CallBackResults> callback = null)
             {
                 try
                 {
                     Directory.GetDataPath(storageDataInfo, (storageDataResults) =>
                     {
-                        StorageData.CallBackResults callBackResults = new StorageData.CallBackResults();
+                        var callBackResults = new AppEventsData.CallBackResults();
 
                         if (System.IO.Directory.Exists(storageDataResults.fileDirectory) == true)
                         {
