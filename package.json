@@ -1,7 +1,7 @@
 {
     "name": "com.bridge.app.serializations.manager",
     "version": "1.0.0",
-    "displayName": "3ridge Serializations Manager",
+    "displayName": "3ridge Data Storage",
     "description": "This package handles saving and loading persistent data file using the Unity built in Json Utility.",
     "unity": "2017.1",
     "unityRelease": "0b5",
@@ -10,10 +10,11 @@
    "keywords": [
       "Bridge",
       "3ridge",
-      "Serializations",
-      "Serializations Manager",
-      "Bridge Serializations Manager",
-      "3ridge Serializations Manager"
+      "Data",
+      "Storage",
+      "Data Storage",
+      "Bridge Data Storage",
+      "3ridge Data Storage"
     ],
     "author": {
       "name": "3ridge",
