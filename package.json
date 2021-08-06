@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "displayName": "3ridge Data Storage",
     "description": "This package handles saving and loading persistent data file using the Unity built in Json Utility.",
-    "unity": "2017.1",
+    "unity": "2020.1",
     "unityRelease": "0b5",
     "dependencies": {
     },
