@@ -32,7 +32,7 @@ namespace Bridge.Core.App.Data.Storage
 
             public string[] directorDataFileList;
             public string assetPath;
-            public GUID assetGUID;
+            public string assetGUID;
 
             public ExtensionType extensionType;
         }

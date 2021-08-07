@@ -274,6 +274,8 @@ namespace Bridge.Core.App.Data.Storage
                 }
             }
 
+#if UNITY_EDITOR
+
             /// <summary>
             /// Loads a scene item from a given path.
             /// </summary>
@@ -331,6 +333,8 @@ namespace Bridge.Core.App.Data.Storage
                     throw exception;
                 }
             }
+
+#endif
         }
 
         /// <summary>
@@ -367,6 +371,8 @@ namespace Bridge.Core.App.Data.Storage
                 }
             }
 
+#if UNITY_EDITOR
+
             /// <summary>
             /// Gets an asset path.
             /// </summary>
@@ -401,7 +407,7 @@ namespace Bridge.Core.App.Data.Storage
 
                         if (string.IsNullOrEmpty(storageData.assetPath) == false)
                         {
-                            storageData.assetGUID = AssetDatabase.GUIDFromAssetPath(storageData.assetPath);
+                            storageData.assetGUID = AssetDatabase.AssetPathToGUID(storageData.assetPath);
 
                             if (storageData.assetGUID == null)
                             {
@@ -426,41 +432,6 @@ namespace Bridge.Core.App.Data.Storage
                 catch (Exception exception)
                 {
                     DebugConsole.Log(LogLevel.Error, $"[Storage] <color=red>Get Asset Path Exception</color>- <color=white>Asset file : {sceneAssetObject.name} failed to get asset path with exception message : </color> <color=cyan>{exception.Message}</color>");
-                    throw exception;
-                }
-            }
-
-            /// <summary>
-            /// Checks if a file exists in a given directory.
-            /// </summary>
-            /// <param name="directoryInfo"></param>
-            /// <param name="callback"></param>
-            public static void DataPathExists(StorageData.DirectoryInfoData directoryInfo, Action<StorageData.DirectoryInfoData, AppEventsData.CallBackResults> callback = null)
-            {
-                try
-                {
-                    Directory.GetDataPath(directoryInfo, (storageDataResults) =>
-                    {
-                        var callBackResults = new AppEventsData.CallBackResults();
-
-                        if (File.Exists(storageDataResults.filePath) == true)
-                        {
-                            callBackResults.success = true;
-                            callBackResults.successValue = $"[Storage] <color=green>Success</color> <color=white>- File :</color> <color=cyan>{directoryInfo.fileName}</color> <color=white>exists at path :</color> <color=cyan>{directoryInfo.filePath}</color>";
-                        }
-
-                        if (File.Exists(storageDataResults.filePath) == false)
-                        {
-                            callBackResults.error = true;
-                            callBackResults.errorValue = $"[Storage] <color=red>Get File Failed</color> <color=white>-There is no file to get at path :</color> <color=cyan>{directoryInfo.filePath}</color>";
-                        }
-
-                        callback.Invoke(storageDataResults, callBackResults);
-                    });
-                }
-                catch (Exception exception)
-                {
-                    DebugConsole.Log(LogLevel.Error, $"[Storage] <color=red>Get File Failed</color>- <color=white>Failed to access file :</color> <color=cyan>{directoryInfo.fileName}</color> <color=white>with exception message : </color> <color=cyan>{exception.Message}</color>");
                     throw exception;
                 }
             }
@@ -555,6 +526,43 @@ namespace Bridge.Core.App.Data.Storage
                 }
             }
 
+#endif
+
+            /// <summary>
+            /// Checks if a file exists in a given directory.
+            /// </summary>
+            /// <param name="directoryInfo"></param>
+            /// <param name="callback"></param>
+            public static void DataPathExists(StorageData.DirectoryInfoData directoryInfo, Action<StorageData.DirectoryInfoData, AppEventsData.CallBackResults> callback = null)
+            {
+                try
+                {
+                    Directory.GetDataPath(directoryInfo, (storageDataResults) =>
+                    {
+                        var callBackResults = new AppEventsData.CallBackResults();
+
+                        if (File.Exists(storageDataResults.filePath) == true)
+                        {
+                            callBackResults.success = true;
+                            callBackResults.successValue = $"[Storage] <color=green>Success</color> <color=white>- File :</color> <color=cyan>{directoryInfo.fileName}</color> <color=white>exists at path :</color> <color=cyan>{directoryInfo.filePath}</color>";
+                        }
+
+                        if (File.Exists(storageDataResults.filePath) == false)
+                        {
+                            callBackResults.error = true;
+                            callBackResults.errorValue = $"[Storage] <color=red>Get File Failed</color> <color=white>-There is no file to get at path :</color> <color=cyan>{directoryInfo.filePath}</color>";
+                        }
+
+                        callback.Invoke(storageDataResults, callBackResults);
+                    });
+                }
+                catch (Exception exception)
+                {
+                    DebugConsole.Log(LogLevel.Error, $"[Storage] <color=red>Get File Failed</color>- <color=white>Failed to access file :</color> <color=cyan>{directoryInfo.fileName}</color> <color=white>with exception message : </color> <color=cyan>{exception.Message}</color>");
+                    throw exception;
+                }
+            }
+
             /// <summary>
             /// Converts the file type enum to a string.
             /// </summary>
@@ -565,9 +573,9 @@ namespace Bridge.Core.App.Data.Storage
                 return type.ToString().ToLowerInvariant();
             }
 
-            #endregion
+#endregion
 
-            #region Disposables
+#region Disposables
 
             /// <summary>
             /// Removes a file from a specified directory.
@@ -660,9 +668,9 @@ namespace Bridge.Core.App.Data.Storage
                 }
             }
 
-            #endregion
+#endregion
         }
 
-        #endregion
+#endregion
     }
 }
