@@ -2,7 +2,8 @@
     "name": "Bridge.Core.App.Data.Storage",
     "rootNamespace": "Bridge.Core.App.Data.Storage",
     "references": [
-        "GUID:e716835e950357547805ba81a6fab883"
+        "GUID:e716835e950357547805ba81a6fab883",
+        "GUID:5ef81270e65190e4babbe8d8e6e466c5"
     ],
     "includePlatforms": [
         "Android",

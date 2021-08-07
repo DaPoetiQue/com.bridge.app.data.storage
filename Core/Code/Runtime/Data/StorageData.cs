@@ -8,12 +8,13 @@ namespace Bridge.Core.App.Data.Storage
     {
         #region Options
 
-        public enum extensionType
+        public enum ExtensionType
         {
             bridge,
             json,
             txt,
-            xml
+            xml,
+            asset
         }
 
         #endregion
@@ -30,10 +31,10 @@ namespace Bridge.Core.App.Data.Storage
             public bool isLoaded;
 
             public string[] directorDataFileList;
-            public string sceneAssetPath;
-            public GUID gameObjectAssetGUID;
+            public string assetPath;
+            public GUID assetGUID;
 
-            public extensionType extensionType;
+            public ExtensionType extensionType;
         }
 
         #region Serializable Data
@@ -275,9 +276,9 @@ namespace Bridge.Core.App.Data.Storage
 
         #region Interfaces
 
-        public interface IResourceManager
+        public interface IStorable
         {
-
+            
         }
 
         #endregion
