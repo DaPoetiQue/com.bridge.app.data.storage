@@ -6,6 +6,7 @@ using UnityEditor;
 using System.Linq;
 using Bridge.Core.Debug;
 using Bridge.Core.App.Events;
+using Bridge.Core.UnityEditor.Debug;
 
 namespace Bridge.Core.App.Data.Storage
 {
