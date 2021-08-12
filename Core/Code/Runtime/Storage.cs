@@ -6,7 +6,12 @@ using UnityEditor;
 using System.Linq;
 using Bridge.Core.Debug;
 using Bridge.Core.App.Events;
+
+#if UNITY_EDITOR
+
 using Bridge.Core.UnityEditor.Debug;
+
+#endif
 
 namespace Bridge.Core.App.Data.Storage
 {
@@ -15,7 +20,7 @@ namespace Bridge.Core.App.Data.Storage
     /// </summary>
     public static class Storage
     {
-        #region Global Save
+#region Global Save
 
         /// <summary>
         /// Saves data to the defined storage data info's directories.
@@ -32,16 +37,16 @@ namespace Bridge.Core.App.Data.Storage
             });
         }
 
-        #endregion
+#endregion
 
-        #region Main Storage
+#region Main Storage
 
         /// <summary>
         /// This class holds functions for saving data using Binary formatters.
         /// </summary>
         public static class BinaryFormatJasonData
         {
-            #region Serializations
+#region Serializations
 
             /// <summary>
             /// Saves app data to a file system using a binary file.
@@ -94,7 +99,12 @@ namespace Bridge.Core.App.Data.Storage
                 }
                 catch (Exception exception)
                 {
-                    DebugConsole.Log(LogLevel.Error, $"[Storage] <color=red>Save Failed Exception</color>- <color=white>Storage file save failed with exception message : </color> <color=cyan>{exception.Message}</color>");
+                    #if UNITY_EDITOR
+
+                        DebugConsole.Log(LogLevel.Error, $"[Storage] <color=red>Save Failed Exception</color>- <color=white>Storage file save failed with exception message : </color> <color=cyan>{exception.Message}</color>");
+
+                    #endif
+
                     throw exception;
                 }
             }
@@ -137,12 +147,18 @@ namespace Bridge.Core.App.Data.Storage
                 }
                 catch (Exception exception)
                 {
-                    DebugConsole.Log(LogLevel.Error, $"[Storage] <color=red>Load Data Failed</color>- <color=white>File failed to load with exception message : </color> <color=cyan>{exception.Message}</color>");
+
+                    #if UNITY_EDITOR
+
+                        DebugConsole.Log(LogLevel.Error, $"[Storage] <color=red>Load Data Failed</color>- <color=white>File failed to load with exception message : </color> <color=cyan>{exception.Message}</color>");
+
+                    #endif
+
                     throw exception;
                 }
             }
 
-            #endregion
+#endregion
         }
 
         /// <summary>
@@ -150,7 +166,7 @@ namespace Bridge.Core.App.Data.Storage
         /// </summary>
         public static class JsonData
         {
-            #region Json Utility Data Serializations
+#region Json Utility Data Serializations
 
             /// <summary>
             /// Saves app data to a file system using a json file.
@@ -205,7 +221,13 @@ namespace Bridge.Core.App.Data.Storage
                 }
                 catch(Exception exception)
                 {
-                    DebugConsole.Log(LogLevel.Error, $"[Storage] Save Failed Exception - Storage file save failed with exception message : <color=cyan>{exception.Message}</color>");
+
+                    #if UNITY_EDITOR
+
+                        DebugConsole.Log(LogLevel.Error, $"[Storage] Save Failed Exception - Storage file save failed with exception message : <color=cyan>{exception.Message}</color>");
+
+                    #endif
+
                     throw exception;
                 }
             }
@@ -249,12 +271,17 @@ namespace Bridge.Core.App.Data.Storage
                 }
                 catch (Exception exception)
                 {
-                    DebugConsole.Log(LogLevel.Error, $"[Storage] <color=red>Load Data Failed</color>- <color=white>File failed to load with exception message : </color> <color=cyan>{exception.Message}</color>");
+                    #if UNITY_EDITOR
+
+                        DebugConsole.Log(LogLevel.Error, $"[Storage] <color=red>Load Data Failed</color>- <color=white>File failed to load with exception message : </color> <color=cyan>{exception.Message}</color>");
+
+                    #endif
+
                     throw exception;
                 }
             }
 
-            #endregion
+#endregion
         }
 
         /// <summary>
@@ -270,7 +297,12 @@ namespace Bridge.Core.App.Data.Storage
                 }
                 catch (Exception exception)
                 {
-                    DebugConsole.Log(LogLevel.Error, $"[Storage-Asset Data] <color=red>Create Asset Exception</color>- <color=white>Asset file : </color><color=cyan>{directoryInfo.fileName}</color> <color=white>failed to create at path : </color> <color=cyan>{directoryInfo.filePath}</color> <color=white>, with exception message : </color> <color=red>{exception.Message}</color>");
+                    #if UNITY_EDITOR
+
+                        DebugConsole.Log(LogLevel.Error, $"[Storage-Asset Data] <color=red>Create Asset Exception</color>- <color=white>Asset file : </color><color=cyan>{directoryInfo.fileName}</color> <color=white>failed to create at path : </color> <color=cyan>{directoryInfo.filePath}</color> <color=white>, with exception message : </color> <color=red>{exception.Message}</color>");
+
+                    #endif
+
                     throw exception;
                 }
             }
@@ -323,14 +355,26 @@ namespace Bridge.Core.App.Data.Storage
 
                             callBack.Invoke(parentObject, results);
 
-                            DebugConsole.Log(LogLevel.Error, callBackResults.successValue);
+                            #if UNITY_EDITOR
+
+                                DebugConsole.Log(LogLevel.Error, callBackResults.successValue);
+
+                            #endif
+
+
                         }
                     });
 
                 }
                 catch (Exception exception)
                 {
-                    DebugConsole.Log(LogLevel.Error, $"[Storage Exeception] <color=red>Get Asset Path Exception</color> <color=white>-Asset file :</color> <color=cyan>{storageAssetPathInfo.fileName}</color> <color=white>failed to load game object at path :</color> <color=orange>{storageAssetPathInfo.assetPath}</color> <color=white>with exception message : </color><color=cyan>{exception.Message}</color>");
+
+                    #if UNITY_EDITOR
+
+                        DebugConsole.Log(LogLevel.Error, $"[Storage Exeception] <color=red>Get Asset Path Exception</color> <color=white>-Asset file :</color> <color=cyan>{storageAssetPathInfo.fileName}</color> <color=white>failed to load game object at path :</color> <color=orange>{storageAssetPathInfo.assetPath}</color> <color=white>with exception message : </color><color=cyan>{exception.Message}</color>");
+
+                    #endif
+
                     throw exception;
                 }
             }
@@ -343,7 +387,7 @@ namespace Bridge.Core.App.Data.Storage
         /// </summary>
         public static class Directory
         {
-            #region Storage Directories
+#region Storage Directories
 
             /// <summary>
             /// This function gets the path to the storage.
@@ -367,7 +411,13 @@ namespace Bridge.Core.App.Data.Storage
                 }
                 catch (Exception exception)
                 {
-                    DebugConsole.Log(LogLevel.Error, $"[Storage] <color=red>Get Path Exception </color><color=white>- Failed to get storage data. Exception message :</color> <color=cyan>{exception.Message}</color>");
+
+                    #if UNITY_EDITOR
+
+                        DebugConsole.Log(LogLevel.Error, $"[Storage] <color=red>Get Path Exception </color><color=white>- Failed to get storage data. Exception message :</color> <color=cyan>{exception.Message}</color>");
+
+                    #endif
+
                     throw exception;
                 }
             }
@@ -432,7 +482,12 @@ namespace Bridge.Core.App.Data.Storage
                 }
                 catch (Exception exception)
                 {
-                    DebugConsole.Log(LogLevel.Error, $"[Storage] <color=red>Get Asset Path Exception</color>- <color=white>Asset file : {sceneAssetObject.name} failed to get asset path with exception message : </color> <color=cyan>{exception.Message}</color>");
+                    #if UNITY_EDITOR
+
+                        DebugConsole.Log(LogLevel.Error, $"[Storage] <color=red>Get Asset Path Exception</color>- <color=white>Asset file : {sceneAssetObject.name} failed to get asset path with exception message : </color> <color=cyan>{exception.Message}</color>");
+
+                    #endif
+
                     throw exception;
                 }
             }
@@ -452,7 +507,12 @@ namespace Bridge.Core.App.Data.Storage
                 }
                 catch (Exception exception)
                 {
-                    DebugConsole.Log(LogLevel.Error, $"[Storage] <color=red>Scene Asset Exist Exception </color><color=white>- Failed to check if scene asset path exist or not. Exception message :</color> <color=cyan>{exception.Message}</color>");
+                    #if UNITY_EDITOR
+
+                        DebugConsole.Log(LogLevel.Error, $"[Storage] <color=red>Scene Asset Exist Exception </color><color=white>- Failed to check if scene asset path exist or not. Exception message :</color> <color=cyan>{exception.Message}</color>");
+
+                    #endif
+
                     throw exception;
                 }
             }
@@ -487,7 +547,12 @@ namespace Bridge.Core.App.Data.Storage
                 }
                 catch (Exception exception)
                 {
-                    DebugConsole.Log(LogLevel.Error, $"[Storage]</color> Scene Asset Exist Exception </color><color=white>- Failed to check if scene asset path exist or not. Exception message :</color> <color=cyan>{exception.Message}</color>");
+                    #if UNITY_EDITOR
+
+                        DebugConsole.Log(LogLevel.Error, $"[Storage]</color> Scene Asset Exist Exception </color><color=white>- Failed to check if scene asset path exist or not. Exception message :</color> <color=cyan>{exception.Message}</color>");
+
+                    #endif
+
                     throw exception;
                 }
             }
@@ -522,7 +587,12 @@ namespace Bridge.Core.App.Data.Storage
                 }
                 catch (Exception exception)
                 {
-                    DebugConsole.Log(LogLevel.Error, $"[Storage] <color=red>Scene Asset Exist Exception </color><color=white>- Failed to check if scene asset path exist or not. Exception message :</color> <color=cyan>{exception.Message}</color>");
+                    #if UNITY_EDITOR
+
+                        DebugConsole.Log(LogLevel.Error, $"[Storage] <color=red>Scene Asset Exist Exception </color><color=white>- Failed to check if scene asset path exist or not. Exception message :</color> <color=cyan>{exception.Message}</color>");
+
+                    #endif
+
                     throw exception;
                 }
             }
@@ -559,7 +629,12 @@ namespace Bridge.Core.App.Data.Storage
                 }
                 catch (Exception exception)
                 {
-                    DebugConsole.Log(LogLevel.Error, $"[Storage] <color=red>Get File Failed</color>- <color=white>Failed to access file :</color> <color=cyan>{directoryInfo.fileName}</color> <color=white>with exception message : </color> <color=cyan>{exception.Message}</color>");
+                    #if UNITY_EDITOR
+
+                        DebugConsole.Log(LogLevel.Error, $"[Storage] <color=red>Get File Failed</color>- <color=white>Failed to access file :</color> <color=cyan>{directoryInfo.fileName}</color> <color=white>with exception message : </color> <color=cyan>{exception.Message}</color>");
+
+                    #endif
+
                     throw exception;
                 }
             }
@@ -612,7 +687,12 @@ namespace Bridge.Core.App.Data.Storage
                 }
                 catch (Exception exception)
                 {
-                    DebugConsole.Log(LogLevel.Error, $"[Storage] <color=red>Delete File Failed</color>- <color=white>File failed to delete with exception message : </color> <color=cyan>{exception.Message}</color>");
+                    #if UNITY_EDITOR
+
+                        DebugConsole.Log(LogLevel.Error, $"[Storage] <color=red>Delete File Failed</color>- <color=white>File failed to delete with exception message : </color> <color=cyan>{exception.Message}</color>");
+
+                    #endif
+
                     throw exception;
                 }
             }
@@ -664,7 +744,12 @@ namespace Bridge.Core.App.Data.Storage
                 }
                 catch (Exception exception)
                 {
-                    DebugConsole.Log(LogLevel.Error, $"[Storage] <color=red>Delete Directory Failed</color>- <color=white>Directory failed to delete with exception message : </color> <color=cyan>{exception.Message}</color>");
+                    #if UNITY_EDITOR
+
+                        DebugConsole.Log(LogLevel.Error, $"[Storage] <color=red>Delete Directory Failed</color>- <color=white>Directory failed to delete with exception message : </color> <color=cyan>{exception.Message}</color>");
+
+                    #endif
+
                     throw exception;
                 }
             }
