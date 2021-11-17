@@ -1,0 +1,34 @@
+// Storage Data Schema File.
+namespace Bridge.Core.App.Data.Storage;
+
+enum FileExtension : byte
+{
+    asset = 1,
+    bat,
+    br,
+    css,
+    dat,
+    dll,
+    fbs,
+    json,
+    html,
+    txt,
+    xml
+}
+
+table StorageFile
+{
+    file_name : string;
+    storage_directory : string;
+    file_extension : FileExtension = br;
+    description : string;
+}
+
+table StorageCache
+{
+    cache_files : [StorageFile];
+    cache_directory : string;
+}
+
+root_type StorageCache;
+file_identifier "DATA";

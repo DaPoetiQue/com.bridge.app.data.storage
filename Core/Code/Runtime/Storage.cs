@@ -6,10 +6,11 @@ using UnityEditor;
 using System.Linq;
 using Bridge.Core.Debug;
 using Bridge.Core.App.Events;
+using FlatBuffers;
 
 #if UNITY_EDITOR
 
-using Bridge.Core.UnityEditor.Debug;
+using Bridge.Core.UnityEditor.Debugger;
 
 #endif
 
@@ -159,6 +160,90 @@ namespace Bridge.Core.App.Data.Storage
             }
 
 #endregion
+        }
+
+        /// <summary>
+        /// This class holds functions for saving data using Flat Buffers.
+        /// </summary>
+        public static class FlatBufferData
+        {
+            public static void Save()
+            {
+                try
+                {
+
+                }
+                catch(Exception exception)
+                {
+#if UNITY_EDITOR
+
+                    DebugConsole.Log(LogLevel.Error, $"[Storage] <color=red>Save Failed Exception</color>- <color=white>Storage file save failed with exception message : </color> <color=cyan>{exception.Message}</color>");
+
+#endif
+
+                    throw exception;
+                }
+            }
+
+            public static void Cache(string cacheDirectory)
+            {
+                try
+                {
+                    FlatBufferBuilder cache = new FlatBufferBuilder(1);
+                    StringOffset directory = cache.CreateString(cacheDirectory);
+
+                    StorageCache.StartStorageCache(cache);
+                    StorageCache.AddCacheDirectory(cache, directory);
+
+                    var dataOffset = StorageCache.EndStorageCache(cache);
+                    StorageCache.FinishStorageCacheBuffer(cache, dataOffset);
+
+                    using(var stream = new MemoryStream(cache.DataBuffer.ToFullArray(), cache.DataBuffer.Position, cache.Offset))
+                    {
+                        File.WriteAllBytes(cacheDirectory, stream.ToArray());
+                    }
+                }
+                catch (Exception exception)
+                {
+#if UNITY_EDITOR
+
+                    DebugConsole.Log(LogLevel.Error, $"[Storage] <color=red>Save Failed Exception</color>- <color=white>Storage file save failed with exception message : </color> <color=cyan>{exception.Message}</color>");
+
+#endif
+
+                    throw exception;
+                }
+            }
+
+            public static void Load(string directory)
+            {
+                try
+                {
+                    if(!File.Exists(directory))
+                    {
+                        return;
+                    }
+
+                    ByteBuffer cacheData = new ByteBuffer(File.ReadAllBytes(directory));
+
+                    if(!StorageCache.StorageCacheBufferHasIdentifier(cacheData))
+                    {
+                        return;
+                    }
+
+                    StorageCache data = StorageCache.GetRootAsStorageCache(cacheData);
+                }
+                catch (Exception exception)
+                {
+#if UNITY_EDITOR
+
+                    DebugConsole.Log(LogLevel.Error, $"[Storage] <color=red>Load Failed Exception</color>- <color=white>Storage file load failed with exception message : </color> <color=cyan>{exception.Message}</color>");
+
+#endif
+
+                    throw exception;
+                }
+            }
         }
 
         /// <summary>

@@ -7,13 +7,19 @@ namespace Bridge.Core.App.Data.Storage
     {
         #region Options
 
-        public enum ExtensionType
+        public enum ExtensionType : sbyte
         {
-            bridge,
+            asset = 1,
+            bat,
+            br,
+            css,
+            dat,
+            dll,
+            fbs,
             json,
+            html,
             txt,
-            xml,
-            asset
+            xml
         }
 
         #endregion
