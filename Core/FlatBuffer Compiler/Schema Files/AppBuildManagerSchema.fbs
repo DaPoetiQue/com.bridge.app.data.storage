@@ -1,0 +1,143 @@
+// App Build Manager Schema File
+namespace Bridge.Core.App.Manager;
+
+enum BuildTargetType : byte
+{
+    StandaloneOSX = 2, 
+    StandaloneWindows = 5, 
+    iOS = 9, 
+    Android = 13,
+    StandaloneWindows64 = 19,
+    WebGL = 20, 
+    WSAPlayer = 21, 
+    StandaloneLinux64 = 24, 
+    PS4 = 31, 
+    XBoxOne = 33, 
+    TVOS = 37, 
+    Switch = 38, 
+    Lumin = 39, 
+    Stadia = 40, 
+    CloudRendering = 41, 
+    GameCoreXBoxSeries = 42, 
+    GameCoreXBoxOne = 43, 
+    PS5 = 44, 
+    EmbeddedLinux = 45, 
+    NoTarget = -2   
+}
+
+enum UIOrientationType : byte
+{
+    Portrait = 1,
+    PortraitUpsideDown,
+    LandscapeLeft,
+    LandscapeRight,
+    AutoRotate,
+}
+
+enum AndroidSdkVersionsType : byte
+{
+    AndroidApiLevelAuto = 0,
+    AndroidApiLevel16 = 16, // Android 4.1, "Jelly Bean", API level 16.
+    AndroidApiLevel17 = 17, // Android 4.2, "Jelly Bean", API level 17.
+    AndroidApiLevel18 = 18, // Android 4.3, "Jelly Bean", API level 18.
+    AndroidApiLevel19 = 19, // Android 4.4, "KitKat", API level 19.
+    AndroidApiLevel21 = 21, // Android 5.0, "Lollipop", API level 21.
+    AndroidApiLevel22 = 22, // Android 5.1, "Lollipop", API level 22.
+    AndroidApiLevel23 = 23, // Android 6.0, "Marshmallow", API level 23.
+    AndroidApiLevel24 = 24, // Android 7.0, "Nougat", API level 24.
+    AndroidApiLevel25 = 25, // Android 7.1, "Nougat", API level 25.
+    AndroidApiLevel26 = 26, // Android 8.0, "Oreo", API level 26.
+    AndroidApiLevel27 = 27, // Android 8.1, "Oreo", API level 27.
+    AndroidApiLevel28 = 28, // Android 9.0, "Pie", API level 28.
+    AndroidApiLevel29 = 29, // Android 10.0, API level 29.
+    AndroidApiLevel30 = 30 // Android 11.0, API level 30.
+}
+
+enum AndroidPreferredInstallLocationType : byte
+{
+    Auto = 0, // Let the OS decide, app doesn't have any preferences.
+    PreferExternal = 1, // Prefer external, if possible. Install to internal otherwise.
+    ForceInternal = 2 // Force installation into internal memory. Needed for things like Live Wallpapers.
+}
+
+struct DisplayResolution
+{
+    width : int32;
+    height : int32;
+}
+
+table UnitySprite
+{
+    url : string;
+    data : [byte];
+}
+
+table UnityTexture
+{
+    url : string;
+    data : [byte];
+}
+
+table AppInfoData 
+{
+    company_name : string;
+    app_name : string;
+    app_version : string;
+    app_icon : UnityTexture;
+    splash_screen : UnitySprite;
+    app_identifier : string;
+}
+
+table BuildConfigData
+{
+    scene : string;
+    platform : BuildTargetType = NoTarget;
+    allow_debugging : bool;
+    development_build : bool;
+    build_location : string;
+}
+
+table AndroidBuildSettingsData
+{
+    install_location : AndroidPreferredInstallLocationType;
+    sdk_version : AndroidSdkVersionsType;
+    build_app_bundle : bool;
+}
+
+table ConsoleDisplaySettingsData
+{
+    resolution : DisplayResolution;
+}
+
+table MobileDisplaySettingsData
+{
+    resolution : DisplayResolution;
+    allowed_orientation : UIOrientationType = 1;
+}
+
+table StandaloneDisplaySettingsData
+{
+    windowed : bool;
+    resolution : DisplayResolution;
+}
+
+table WebDisplaySettingsData
+{
+    resolution : DisplayResolution;
+}
+
+table AppBuildSettingsData
+{
+    app_info : AppInfoData;
+    configurations : BuildConfigData;
+    console_display_settings : ConsoleDisplaySettingsData;
+    mobile_display_settings : MobileDisplaySettingsData;
+    standalone_display_settings : StandaloneDisplaySettingsData;
+    web_display_settings : WebDisplaySettingsData;
+    android_settings : AndroidBuildSettingsData;
+}
+
+root_type AppBuildSettingsData;
+
+// File Identifier : App Build Manager Data
+file_identifier "ABMD"; 

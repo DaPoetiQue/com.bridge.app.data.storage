@@ -21,33 +21,14 @@ namespace Bridge.Core.App.Data.Storage
     /// </summary>
     public static class Storage
     {
-#region Global Save
-
-        /// <summary>
-        /// Saves data to the defined storage data info's directories.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="storageDataInfo"></param>
-        /// <param name="data"></param>
-        /// <param name="callback"></param>
-        public static void SaveJsonFile<T>(StorageData.DirectoryInfoData storageDataInfo, T data, Action<StorageData.DirectoryInfoData, AppEventsData.CallBackResults> callback = null)
-        {
-            JsonData.Save(storageDataInfo, data, (directoryInfoResults, callBackResults) => 
-            {
-                callback.Invoke(directoryInfoResults, callBackResults);
-            });
-        }
-
-#endregion
-
-#region Main Storage
+        #region Main Storage
 
         /// <summary>
         /// This class holds functions for saving data using Binary formatters.
         /// </summary>
         public static class BinaryFormatJasonData
         {
-#region Serializations
+            #region Serializations
 
             /// <summary>
             /// Saves app data to a file system using a binary file.
@@ -110,6 +91,10 @@ namespace Bridge.Core.App.Data.Storage
                 }
             }
 
+            #endregion
+
+            #region Deserialization
+
             /// <summary>
             /// Loads app data from a file system using a binary file. 
             /// </summary>
@@ -159,7 +144,7 @@ namespace Bridge.Core.App.Data.Storage
                 }
             }
 
-#endregion
+            #endregion
         }
 
         /// <summary>
@@ -167,13 +152,52 @@ namespace Bridge.Core.App.Data.Storage
         /// </summary>
         public static class FlatBufferData
         {
-            public static void Save()
+            #region Serializations
+
+            /// <summary>
+            /// Saves app data to a file system using flat buffers.
+            /// </summary>
+            /// <typeparam name="T">Generic type for saving any type of data.</typeparam>
+            /// <param name="storageDataInfo">The files that contains the storage information for the saved data file.</param>
+            /// <param name="data">The data that to be serialized.</param>
+            /// <param name="callback">The results returned after saving the data</param>
+            public static void Save<T>(StorageData.DirectoryInfoData storageDataInfo, T data, Action<AppEventsData.CallBackResults> callback = null)
             {
                 try
                 {
+                    Directory.GetDataPath(storageDataInfo, (storageDataResults) =>
+                    {
+                        var callBackResults = new AppEventsData.CallBackResults();
 
+                        if (System.IO.Directory.Exists(storageDataResults.fileDirectory) == false)
+                        {
+                            System.IO.Directory.CreateDirectory(storageDataResults.fileDirectory);
+                        }
+
+                        if (System.IO.Directory.Exists(storageDataResults.fileDirectory) == true)
+                        {
+                            if (File.Exists(storageDataResults.filePath) == true)
+                            {
+                                callBackResults.success = true;
+                                callBackResults.successValue = $"[Storage] <color=green>Success</color> <color=white>- Data file :</color> <color=cyan>{storageDataResults.fileName}</color> <color=white>Replaced Successfully at path :</color> <color=cyan>{storageDataResults.folderName}</color>";
+                            }
+
+                            if (File.Exists(storageDataResults.filePath) == false)
+                            {
+                                callBackResults.error = true;
+                                callBackResults.errorValue = $"[Storage] <color=red>File write failed</color> <color=white>-Couldn't write file :</color> <color=cyan>{storageDataResults.fileName}</color> <color=white>, to path :</color> <color=orange>{storageDataResults.filePath}</color>";
+                            }
+                        }
+                        else
+                        {
+                            callBackResults.error = true;
+                            callBackResults.errorValue = $"[Storage] <color=red>File write failed</color> <color=white>-Couldn't write file :</color> <color=cyan>{storageDataResults.fileName}</color> <color=white>, to path :</color> <color=orange>{storageDataResults.filePath}</color>, <color=white>File storage directory not found.</color>";
+                        }
+
+                        callback.Invoke(callBackResults);
+                    });
                 }
-                catch(Exception exception)
+                catch (Exception exception)
                 {
 #if UNITY_EDITOR
 
@@ -215,6 +239,10 @@ namespace Bridge.Core.App.Data.Storage
                 }
             }
 
+            #endregion
+
+            #region Deserialization
+
             public static void Load(string directory)
             {
                 try
@@ -235,15 +263,17 @@ namespace Bridge.Core.App.Data.Storage
                 }
                 catch (Exception exception)
                 {
-#if UNITY_EDITOR
+                    #if UNITY_EDITOR
 
                     DebugConsole.Log(LogLevel.Error, $"[Storage] <color=red>Load Failed Exception</color>- <color=white>Storage file load failed with exception message : </color> <color=cyan>{exception.Message}</color>");
 
-#endif
+                    #endif
 
                     throw exception;
                 }
             }
+
+            #endregion
         }
 
         /// <summary>
@@ -251,7 +281,7 @@ namespace Bridge.Core.App.Data.Storage
         /// </summary>
         public static class JsonData
         {
-#region Json Utility Data Serializations
+            #region Json Utility Data Serializations
 
             /// <summary>
             /// Saves app data to a file system using a json file.
@@ -366,7 +396,7 @@ namespace Bridge.Core.App.Data.Storage
                 }
             }
 
-#endregion
+            #endregion
         }
 
         /// <summary>
@@ -490,8 +520,9 @@ namespace Bridge.Core.App.Data.Storage
 
                     directoryInfo.fileName = directoryInfo.fileName.Contains($".{GetFileExtensionType(directoryInfo.extensionType)}") ? directoryInfo.fileName : directoryInfo.fileName + $".{GetFileExtensionType(directoryInfo.extensionType)}";
                     directoryInfo.fileDirectory = Path.Combine(Application.persistentDataPath, directoryInfo.folderName);
+                    directoryInfo.fileDirectory = directoryInfo.fileDirectory.Replace("\\", "/");
                     directoryInfo.filePath = Path.Combine(directoryInfo.fileDirectory, directoryInfo.fileName);
-
+                    directoryInfo.filePath = directoryInfo.filePath.Replace("\\", "/");
                     callback.Invoke(directoryInfo);
                 }
                 catch (Exception exception)
