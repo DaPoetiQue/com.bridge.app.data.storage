@@ -495,6 +495,50 @@ namespace Bridge.Core.App.Data.Storage
                 }
             }
 
+            /// <summary>
+            /// This function loads assets from an array of paths.
+            /// </summary>
+            /// <param name="assetPath">The array of paths to load assets from.</param>
+            /// <returns>Returns a array of assets loaded from the given paths.</returns>
+            public static void LoadAssets<T>(string[] assetPath, Action<T[], AppEventsData.CallBackResults> callBack = null) where T : UnityEngine.Object
+            {
+                AppEventsData.CallBackResults callBackResults = new AppEventsData.CallBackResults();
+
+                try
+                {
+                    T[] assets = new T[assetPath.Length];
+
+                    if (assetPath.Length > 0)
+                    {
+                        for (int i = 0; i < assetPath.Length; i++)
+                        {
+                            assets[i] = AssetDatabase.LoadAssetAtPath<T>(assetPath[i]);
+                        }
+
+                        callBackResults.success = true;
+                        callBackResults.successValue = $"{assets.Length} - assets loaded successfully.";
+                    }
+                    else
+                    {
+                        callBackResults.error = true;
+                        callBackResults.errorValue = "There are no assets paths assigned.";
+                    }
+
+                    callBack.Invoke(assets, callBackResults);
+                }
+                catch(Exception exception)
+                {
+#if UNITY_EDITOR
+
+                    DebugConsole.Log(LogLevel.Error, $"[Storage] <color=red>Load Assets Failed</color>- <color=white>File failed to load assets with exception message : </color> <color=cyan>{exception.Message}</color>");
+
+#endif
+                    callBackResults.error = true;
+                    callBackResults.errorValue = exception.Message;
+                    callBack.Invoke(null, callBackResults);
+                    throw exception;
+                }
+            }
 #endif
         }
 
@@ -609,6 +653,41 @@ namespace Bridge.Core.App.Data.Storage
                 }
             }
 
+            public static void GetAssetsPaths<T>(T[] assets, Action<string[], AppEventsData.CallBackResults> callBack = null) where T : UnityEngine.Object
+            {
+                AppEventsData.CallBackResults callBackResults = new AppEventsData.CallBackResults();
+
+                try
+                {
+                    string[] paths = new string[assets.Length];
+
+                    if (assets.Length > 0)
+                    {
+                        for (int i = 0; i < assets.Length; i++)
+                        {
+                            paths[i] = AssetDatabase.GetAssetPath(assets[i]);
+                        }
+
+                        callBackResults.success = true;
+                        callBackResults.successValue = "Assets paths has been loaded successfully.";
+                    }
+                    else
+                    {
+                        callBackResults.error = true;
+                        callBackResults.errorValue = "Get assets paths failed.";
+                    }
+
+                    callBack.Invoke(paths, callBackResults);
+                }
+                catch (Exception exception)
+                {
+                    callBackResults.error = true;
+                    callBackResults.errorValue = exception.Message;
+                    callBack.Invoke(null, callBackResults);
+                    throw exception;
+                }
+            }
+
             /// <summary>
             ///  This function checks if scene assets path exists.
             ///  Gets all the asset path.
@@ -682,10 +761,10 @@ namespace Bridge.Core.App.Data.Storage
             /// <param name="callBack"></param>
             public static void AssetPathExists(StorageData.DirectoryInfoData directoryInfo, Action<AppEventsData.CallBackResults> callBack = null)
             {
+                var callBackResults = new AppEventsData.CallBackResults();
+
                 try
                 {
-                    var callBackResults = new AppEventsData.CallBackResults();
-
                     string[] pathFilter = AssetDatabase.GetAllAssetPaths();
 
                     if (pathFilter.Contains(directoryInfo.assetPath) == true)
@@ -708,12 +787,85 @@ namespace Bridge.Core.App.Data.Storage
 
                         DebugConsole.Log(LogLevel.Error, $"[Storage] <color=red>Scene Asset Exist Exception </color><color=white>- Failed to check if scene asset path exist or not. Exception message :</color> <color=cyan>{exception.Message}</color>");
 
-                    #endif
+#endif
+
+                    callBackResults.error = true;
+                    callBackResults.errorValue = exception.Message;
+                    callBack.Invoke(callBackResults);
 
                     throw exception;
                 }
             }
 
+            /// <summary>
+            /// Checks if a folder exists in the given directory path.
+            /// </summary>
+            /// <param name="directory">The directory to check.</param>
+            /// <param name="callBack">The results from the folder exists check.</param>
+            public static void FolderExist(string directory, Action<AppEventsData.CallBackResults> callBack = null)
+            {
+                var callBackResults = new AppEventsData.CallBackResults();
+
+                try
+                {
+                    if(System.IO.Directory.Exists(directory))
+                    {
+                        callBackResults.success = true;
+                        callBackResults.successValue = $"Folder forund @ : {directory}";
+                    }
+                    else
+                    {
+                        callBackResults.error = true;
+                        callBackResults.errorValue = $"Folder not forund @ : {directory}"; 
+                    }
+
+                    callBack.Invoke(callBackResults);
+                }
+                catch (Exception exception)
+                {
+#if UNITY_EDITOR
+
+                    DebugConsole.Log(LogLevel.Error, $"[Storage] <color=red>Folder Exist Exception </color><color=white>- Failed to check if folder at path : {directory} exist or not. Exception message :</color> <color=cyan>{exception.Message}</color>");
+
+#endif
+
+                    callBackResults.error = true;
+                    callBackResults.errorValue = exception.Message;
+                    callBack.Invoke(callBackResults);
+
+                    throw exception;
+                }
+            }
+
+            public static bool FolderExist(string directory)
+            {
+                try
+                {
+                    if (System.IO.Directory.Exists(directory))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                catch (Exception exception)
+                {
+#if UNITY_EDITOR
+
+                    DebugConsole.Log(LogLevel.Error, $"[Storage] <color=red>Folder Exist Exception </color><color=white>- Failed to check if folder at path : {directory} exist or not. Exception message :</color> <color=cyan>{exception.Message}</color>");
+
+#endif
+
+                    throw exception;
+                }
+            }
+
+            /// <summary>
+            /// Opens a diven folder from a directory path.
+            /// </summary>
+            /// <param name="directory"></param>
             public static void OpenFolder(string directory)
             {
                 if (System.IO.Directory.Exists(directory))
@@ -893,9 +1045,21 @@ namespace Bridge.Core.App.Data.Storage
         /// </summary>
         public static class BatchCommands
         {
-            public static string Copy(string fromDirectory, string toDirectory, string excludeFiles = null, string excludeFolders = null)
+            public static string CopyFiles(string fromDirectory, string toDirectory, string excludeFiles = null, string excludeFolders = null)
             {
                 string command = $"robocopy {fromDirectory} {toDirectory} {excludeFolders} {excludeFiles}";
+                return command;
+            }
+
+            public static string CopyFilesAndSubFolders(string fromDirectory, string toDirectory, string excludeFiles = null, string excludeFolders = null)
+            {
+                string command = $"robocopy /S {fromDirectory} {toDirectory} {excludeFolders} {excludeFiles}";
+                return command;
+            }
+
+            public static string CopyFilesAndSubFoldersAndRemoveSource(string fromDirectory, string toDirectory, string excludeFiles = null, string excludeFolders = null)
+            {
+                string command = $"robocopy /MOVE /S /E {fromDirectory} {toDirectory} {excludeFolders} {excludeFiles}";
                 return command;
             }
 
