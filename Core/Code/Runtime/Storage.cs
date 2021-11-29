@@ -496,6 +496,60 @@ namespace Bridge.Core.App.Data.Storage
             }
 
             /// <summary>
+            /// This function loads an asset from a path.
+            /// </summary>
+            /// <param name="assetPath">The path to load the assets from.</param>
+            /// <returns>Returns a an asset loaded from the given path.</returns>
+            public static void LoadAsset<T>(string assetPath, Action<T, AppEventsData.CallBackResults> callBack = null) where T : UnityEngine.Object
+            {
+                AppEventsData.CallBackResults callBackResults = new AppEventsData.CallBackResults();
+
+                try
+                {
+                    T asset = null;
+
+                    if (Directory.AssetPathExists(assetPath))
+                    {
+
+                        if (assetPath.Length > 0)
+                        {
+                            asset = AssetDatabase.LoadAssetAtPath<T>(assetPath);
+
+                            if(asset != null)
+                            {
+                                callBackResults.success = true;
+                                callBackResults.successValue = $"{asset.name} - loaded successfully from path : {assetPath}.";
+                            }
+                            else
+                            {
+                                callBackResults.error = true;
+                                callBackResults.errorValue = $"Asset failed to load from path : {assetPath}.";
+                            }
+                        }
+                    }
+                    else
+                    {
+                        callBackResults.error = true;
+                        callBackResults.errorValue = $"Asset path : {assetPath} not found.";
+                    }
+
+                    callBack.Invoke(asset, callBackResults);
+                }
+                catch (Exception exception)
+                {
+#if UNITY_EDITOR
+
+                    DebugConsole.Log(LogLevel.Error, $"[Storage] <color=red>Load Assets Failed</color>- <color=white>File failed to load assets with exception message : </color> <color=cyan>{exception.Message}</color>");
+
+#endif
+                    callBackResults.error = true;
+                    callBackResults.errorValue = exception.Message;
+                    callBack.Invoke(null, callBackResults);
+                    throw exception;
+                }
+            }
+
+            /// <summary>
             /// This function loads assets from an array of paths.
             /// </summary>
             /// <param name="assetPath">The array of paths to load assets from.</param>
@@ -648,6 +702,50 @@ namespace Bridge.Core.App.Data.Storage
                         DebugConsole.Log(LogLevel.Error, $"[Storage] <color=red>Get Asset Path Exception</color>- <color=white>Asset file : {sceneAssetObject.name} failed to get asset path with exception message : </color> <color=cyan>{exception.Message}</color>");
 
                     #endif
+
+                    throw exception;
+                }
+            }
+
+
+            /// <summary>
+            /// Returns the path for the asset.
+            /// </summary>
+            /// <typeparam name="T">The type of asset.</typeparam>
+            /// <param name="asset">The asset that the path is requested for.</param>
+            /// <param name="callBack"></param>
+            public static void GetAssetPath<T>(T asset, Action<string, AppEventsData.CallBackResults> callBack = null) where T : UnityEngine.Object
+            {
+                var callBackResults = new AppEventsData.CallBackResults();
+
+                try
+                {
+                    string path = AssetDatabase.GetAssetPath(asset);
+
+                    if(string.IsNullOrEmpty(path) == false)
+                    {
+                        callBackResults.success = true;
+                        callBackResults.successValue = $"Asset path successfully found @ : {path}";
+                    }
+                    else
+                    {
+                        callBackResults.error = true;
+                        callBackResults.errorValue = "Get asset path failed.";
+                    }
+
+                    callBack.Invoke(path, callBackResults);
+                }
+                catch (Exception exception)
+                {
+#if UNITY_EDITOR
+
+                    DebugConsole.Log(LogLevel.Error, $"[Storage] <color=red>Scene Asset Exist Exception </color><color=white>- Failed to check if scene asset path exist or not. Exception message :</color> <color=cyan>{exception.Message}</color>");
+
+#endif
+
+                    callBackResults.error = true;
+                    callBackResults.errorValue = exception.Message;
+                    callBack.Invoke(string.Empty,callBackResults);
 
                     throw exception;
                 }
