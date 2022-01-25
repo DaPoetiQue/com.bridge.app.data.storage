@@ -601,7 +601,81 @@ namespace Bridge.Core.App.Data.Storage
         /// </summary>
         public static class Directory
         {
-#region Storage Directories
+
+            #region Pre-Defined File Directories
+
+            #region Enum Data Types
+
+            /// <summary>
+            /// A List of data type to load.
+            /// </summary>
+            public enum ProjectInfoDataType
+            {
+                AllUnityEditorData,
+                UnityEditorApplicationInfoData,
+                UnityEditorApplicationDirectoryData,
+                UnityEditorProjectDirectoryData,
+            }
+
+            #endregion
+
+            #region Class Data Types
+
+            /// <summary>
+            /// This class contains Unity project build directory data. 
+            /// </summary>
+            public class UnityEditorProjectInfoData
+            {
+                // <-- BUILD DIRECTORIES -->
+                public string projectDirectory;
+                public string projectBuildTempDirectory;
+                public string projectBuildScriptCompilerDirectory;
+                public string projectBuildDirectory;
+
+                // <-- PROJECT DIRECTORIES -->
+                public string localUseRootDirectory;
+                public string editorApplicationDirectory;
+                public string editorApplicationRelativeDirectory;
+                public string unityEditorLogFilePath;
+            }
+
+            #endregion
+
+            #region Main
+
+            /// <summary>
+            /// This function returns Unity Editor project directory information.
+            /// </summary>
+            /// <returns>Unity Editor Project Info Data</returns>
+            public static UnityEditorProjectInfoData GetUnityEditorProjectInfoData(string buildScriptFolderName = null)
+            {
+                UnityEditorProjectInfoData infoData = new UnityEditorProjectInfoData();
+
+                // <-- DIRECTORIES -->
+                infoData.localUseRootDirectory = "C:/Program Files/";
+                infoData.editorApplicationDirectory = "/Editor/Unity.exe";
+                infoData.editorApplicationRelativeDirectory = "\"" + infoData.localUseRootDirectory + Application.unityVersion + infoData.editorApplicationDirectory + "\"";
+
+                string unityEditorLogFileDirectory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                string unityEditorLogFileRelativeDirectory = $"{unityEditorLogFileDirectory}\\Unity\\Editor\\Editor.log";
+                infoData.unityEditorLogFilePath = unityEditorLogFileRelativeDirectory;
+
+                infoData.projectBuildDirectory = $"{GetProjectTempDirectory()}\\Builds";
+                infoData.projectBuildTempDirectory = $"\"{GetProjectTempDirectory().Replace("\\", "/")}\"";
+
+                if (string.IsNullOrEmpty(buildScriptFolderName) == false)
+                {
+                    infoData.projectBuildScriptCompilerDirectory = $"\"{GetProjectTempDirectory().Replace("\\", "/")}{buildScriptFolderName}\"";
+                }
+
+                return infoData;
+            }
+
+            #endregion
+
+            #endregion
+
+            #region Storage Directories
 
             /// <summary>
             /// This function gets the path to the storage.
@@ -1136,68 +1210,6 @@ namespace Bridge.Core.App.Data.Storage
             }
 
 #endregion
-        }
-
-        /// <summary>
-        /// Executable batch commands.
-        /// </summary>
-        public static class BatchCommands
-        {
-            public static string CopyFiles(string fromDirectory, string toDirectory, string excludeFiles = null, string excludeFolders = null)
-            {
-                string command = $"robocopy {fromDirectory} {toDirectory} {excludeFolders} {excludeFiles}";
-                return command;
-            }
-
-            public static string CopyFilesAndSubFolders(string fromDirectory, string toDirectory, string excludeFiles = null, string excludeFolders = null)
-            {
-                string command = $"robocopy /S {fromDirectory} {toDirectory} {excludeFolders} {excludeFiles}";
-                return command;
-            }
-
-            public static string CopyFilesAndSubFoldersAndRemoveSource(string fromDirectory, string toDirectory, string excludeFiles = null, string excludeFolders = null)
-            {
-                string command = $"robocopy /MOVE /S /E {fromDirectory} {toDirectory} {excludeFolders} {excludeFiles}";
-                return command;
-            }
-
-            public static string Move(string fromDirectory, string toDirectory)
-            {
-                string command = $"move {fromDirectory}\\*.* {toDirectory.Replace("/", "\\")}";
-                return command;
-            }
-
-            public static string RemoveDirectory(string directory)
-            {
-                string command = $"rmdir /s/q \"{directory}\"";
-                return command;
-            }
-
-            public static string ChangeDirectoryTo(string directory)
-            {
-                string command = $"rmdir {directory}";
-                return command;
-            }
-
-            public static string UnityExcludedFiles()
-            {
-                string builds = "*.apk *.exe *.aab *.unitypackage";
-                string autoGenerated = "*.csproj *.unityproj *.sln *.suo *.tmp *.user *.userprefs *.pidb *.booproj *.svd *.pdb *.mdb *.opendb *.VC.db";
-                string excludeFiles = $"/xf {autoGenerated} {builds}";
-
-                return excludeFiles;
-            }
-
-            public static string UnityExcludedFolders()
-            {
-                string excludedFolders = "/E /xd Library Temp Build Builds Obj Logs UserSettings MemoryCaptures";
-                return excludedFolders;
-            }
-
-            public static void RunBatchCommand(string command)
-            {
-                Process.Start(command);
-            }
         }
 
 #endregion
