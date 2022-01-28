@@ -641,7 +641,7 @@ namespace Bridge.Core.App.Data.Storage
 
             #endregion
 
-            #region Main
+            #region Data Info
 
             /// <summary>
             /// This function returns Unity Editor project directory information.
@@ -669,6 +669,89 @@ namespace Bridge.Core.App.Data.Storage
                 }
 
                 return infoData;
+            }
+
+            #endregion
+
+            #region Formatted Directories
+
+            /// <summary>
+            /// This batch command function is used to get a formated directory with removed spacing and a backwards Slash/Solidus. 
+            /// </summary>
+            /// <param name="directory">Directory to be formated.</param>
+            /// <returns>Batch command for formating a directory with removed spacing and a backwards Slash/Solidus.</returns>
+            public static string GetFormatedDirectoryWithRemovedSpacingAndBackwardsSolidus(string directory)
+            {
+                return directory.Replace(" ", string.Empty).Replace("/", "\\");
+            }
+
+            /// <summary>
+            /// This batch command function is used to get a formated directory with removed spacing and a forward Slash/Solidus. 
+            /// </summary>
+            /// <param name="directory">Directory to be formated.</param>
+            /// <returns>Batch command for formating a directory with removed spacing and a forward Slash/Solidus.</returns>
+            public static string GetFormatedDirectoryWithRemovedSpacingAndForwardSolidus(string directory)
+            {
+                return directory.Replace(" ", string.Empty).Replace("\\", "/");
+            }
+
+            /// <summary>
+            /// This batch command function is used to get a formated directory with removed spacing.
+            /// </summary>
+            /// <param name="directory">Directory to be formated.</param>
+            /// <returns>Batch command for formating a directory with removed spacing.</returns>
+            public static string GetFormattedDirectoryWithRemovedSpacing(string directory)
+            {
+                return directory.Replace(" ", string.Empty);
+            }
+
+            /// <summary>
+            /// This function reverse/inverse a forwad Slash/Solidus into a backwards Slash/Solidus.
+            /// </summary>
+            /// <param name="directory">The directory to be reversed/inversed forward.</param>
+            /// <returns>Reversed/Inversed Forward Slash/Solidus Directory.</returns>
+            public static string GetFormattedDirectoryWithBackwardsSolidus(string directory)
+            {
+                return directory.Replace("/", "\\"); ;
+            }
+
+            /// <summary>
+            /// This function reverse/inverse a backwards Slash/Solidus into a forward Slash/Solidus.
+            /// </summary>
+            /// <param name="directory">The directory to be reversed/inversed forward.</param>
+            /// <returns>Reversed/Inversed Forward Slash/Solidus Directory.</returns>
+            public static string GetFormattedDirectoryWithForwardSolidus(string directory)
+            {
+                return directory.Replace("\\", "/"); ;
+            }
+
+            /// <summary>
+            /// This function reverse/inverse the current Slash/Solidus. 
+            /// </summary>
+            /// <param name="directory">The directory to be reversed/inversed.</param>
+            /// <returns>Reversed/Inversed Slash/Solidus Directory.</returns>
+            public static string GetFormattedDirectoryWithInversedSolidus(string directory)
+            {
+                if (directory.Contains("/"))
+                {
+                    GetFormattedDirectoryWithBackwardsSolidus(directory);
+                }
+                else if (directory.Contains("\\"))
+                {
+                    GetFormattedDirectoryWithForwardSolidus(directory);
+                }
+
+                return directory;
+            }
+
+            /// <summary>
+            /// This function is used to add quotation marks to a given directory.
+            /// </summary>
+            /// <param name="directory">Directory to be formatted.</param>
+            /// <returns>Directory with quotation marks.</returns>
+            public static string GetStringFormattedDirectory(string directory)
+            {
+                return $"\"{directory}\"";
             }
 
             #endregion
@@ -1104,9 +1187,13 @@ namespace Bridge.Core.App.Data.Storage
                 return type.ToString().ToLowerInvariant();
             }
 
-#endregion
+            #endregion
 
-#region Disposables
+            #region Storage Data Commands
+
+            #endregion
+
+            #region Disposables
 
             /// <summary>
             /// Removes a file from a specified directory.
