@@ -11,7 +11,7 @@ using System.Diagnostics;
 
 #if UNITY_EDITOR
 
-using Bridge.Core.UnityEditor.Debugger;
+using Bridge.Core.UnityCustomEditor.Debugger;
 
 #endif
 
